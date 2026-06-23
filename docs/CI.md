@@ -16,13 +16,16 @@ The workflow discovers buildable examples by looking for directories under `exam
 - `CMakeLists.txt`
 - `main/`
 
-For pull requests and pushes, changed examples are built. The managed BSP quick-start example is included as a default smoke test because it validates the online `waveshare/esp32_s3_touch_amoled_1_8` component path.
+For pull requests and pushes, changed examples are built. The default smoke-test set is also included so CI keeps checking the managed component path even when the pull request only changes a later demo:
+
+- `00_board_check`
+- `00_BSP_QuickStart`
 
 Manual runs accept one input:
 
 | Input | Value |
 | --- | --- |
-| `example` | Defaults to `00_BSP_QuickStart`; accepts `all`, a directory name such as `04_SD_MMC`, or a full path such as `examples/ESP-IDF-v5.5.1/04_SD_MMC` |
+| `example` | Defaults to `00_board_check`; accepts `all`, a directory name such as `14_lvgl_demo_v9`, or a full path such as `examples/ESP-IDF-v5.5.1/14_lvgl_demo_v9` |
 
 The workflow currently builds with:
 
@@ -30,3 +33,14 @@ The workflow currently builds with:
 - Target: `esp32s3`
 
 Arduino examples are intentionally not built by this workflow yet.
+
+## Local Script Checks
+
+The discovery helper can be run without building firmware:
+
+```bash
+python .github/scripts/discover_esp_idf_examples.py --example 00_board_check
+python .github/scripts/discover_esp_idf_examples.py --example all
+```
+
+Both commands print the matrix JSON that the workflow passes to the ESP-IDF CI action.

@@ -1,0 +1,13 @@
+menu "Example I2C console configuration"
+    config EXAMPLE_I2C_MASTER_SDA
+        int "I2C SDA GPIO"
+        default 15
+
+    config EXAMPLE_I2C_MASTER_SCL
+        int "I2C SCL GPIO"
+        default 14
+
+    config EXAMPLE_I2C_MASTER_FREQ_HZ
+        int "I2C clock frequency"
+        default 400000
+endmenu

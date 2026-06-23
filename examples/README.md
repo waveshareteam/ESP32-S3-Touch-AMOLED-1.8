@@ -7,23 +7,45 @@ This directory contains ESP-IDF projects and Arduino sketches for the Waveshare 
 Each directory under [ESP-IDF-v5.5.1](ESP-IDF-v5.5.1/) is a standalone ESP-IDF project. Run ESP-IDF commands from inside the selected example directory unless the example README says otherwise.
 
 ```bash
-cd examples/ESP-IDF-v5.5.1/00_BSP_QuickStart
+cd examples/ESP-IDF-v5.5.1/00_board_check
 idf.py set-target esp32s3
 idf.py build
 idf.py -p PORT flash monitor
 ```
 
+## BSP Component Examples
+
+These examples are adapted from the ESP32-P4 platform ESP-IDF example order, with hardware-specific changes for ESP32-S3-Touch-AMOLED-1.8 and the managed `waveshare/esp32_s3_touch_amoled_1_8` component.
+
 | Directory | Purpose | Notes |
 | --- | --- | --- |
-| [00_BSP_QuickStart](ESP-IDF-v5.5.1/00_BSP_QuickStart/) | Managed BSP component quick start | Recommended first ESP-IDF example |
+| [00_board_check](ESP-IDF-v5.5.1/00_board_check/) | Board capability and pin summary | Good first serial-only check |
+| [01_HowToCreateProject](ESP-IDF-v5.5.1/01_HowToCreateProject/) | Minimal managed-BSP project template | Declares the online BSP dependency |
+| [02_HelloWorld](ESP-IDF-v5.5.1/02_HelloWorld/) | ESP-IDF hello world | Chip info, countdown, restart |
+| [03_nvs_counter](ESP-IDF-v5.5.1/03_nvs_counter/) | NVS persistent boot counter | Demonstrates flash-backed state |
+| [04_freertos_tasks](ESP-IDF-v5.5.1/04_freertos_tasks/) | FreeRTOS task and queue demo | Producer/consumer logging |
+| [05_gpio_io](ESP-IDF-v5.5.1/05_gpio_io/) | GPIO input/output loopback | Choose safe exposed pins in menuconfig |
+| [06_gpio_interrupt](ESP-IDF-v5.5.1/06_gpio_interrupt/) | GPIO interrupt handling | Choose safe exposed input pin in menuconfig |
+| [08_i2c_tools](ESP-IDF-v5.5.1/08_i2c_tools/) | I2C scan tool | Defaults to the onboard I2C bus |
+| [09_sdmmc](ESP-IDF-v5.5.1/09_sdmmc/) | SDMMC/FAT example | Mounts through the BSP SD API |
+| [10_wifistation](ESP-IDF-v5.5.1/10_wifistation/) | Wi-Fi station example | Configure credentials in menuconfig |
+| [12_I2SCodec](ESP-IDF-v5.5.1/12_I2SCodec/) | ES8311 playback or microphone echo | Uses BSP audio codec handles |
+| [13_Displaycolorbar](ESP-IDF-v5.5.1/13_Displaycolorbar/) | Display color-bar rendering | Draws RGB565 bars through the BSP panel |
+| [14_lvgl_demo_v9](ESP-IDF-v5.5.1/14_lvgl_demo_v9/) | LVGL v9 widgets demo | Uses BSP display, touch, LVGL, brightness |
+
+## Legacy Hardware Examples
+
+The original ESP-IDF examples are kept for hardware-specific bring-up and compatibility checks. They may include local component copies or older structure, but remain useful when validating individual peripherals.
+
+| Directory | Purpose | Notes |
+| --- | --- | --- |
+| [00_BSP_QuickStart](ESP-IDF-v5.5.1/00_BSP_QuickStart/) | Managed BSP component quick start | Interactive LVGL smoke test |
 | [01_AXP2101](ESP-IDF-v5.5.1/01_AXP2101/) | PMU check | Legacy local-component example |
 | [02_PCF85063](ESP-IDF-v5.5.1/02_PCF85063/) | RTC check | Legacy local-component example |
 | [03_QMI8658](ESP-IDF-v5.5.1/03_QMI8658/) | IMU acceleration and gyro readings | Uses SensorLib |
 | [04_SD_MMC](ESP-IDF-v5.5.1/04_SD_MMC/) | SD card mount and file I/O | Requires a formatted microSD card |
 | [05_LVGL_WITH_RAM](ESP-IDF-v5.5.1/05_LVGL_WITH_RAM/) | AMOLED touch UI with LVGL | Uses PSRAM-backed draw buffers |
 | [06_I2SCodec](ESP-IDF-v5.5.1/06_I2SCodec/) | ES8311 music/echo demo | Requires speaker or headphones |
-
-The new BSP quick-start example uses the online `waveshare/esp32_s3_touch_amoled_1_8` component directly. Older examples are kept for hardware-specific bring-up and compatibility checks.
 
 ## Arduino
 
