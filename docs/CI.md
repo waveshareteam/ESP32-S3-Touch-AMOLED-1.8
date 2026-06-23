@@ -6,12 +6,12 @@ This repository uses GitHub Actions to build selected ESP-IDF examples when they
 
 The `ESP-IDF examples` workflow runs on:
 
-- Pull requests that change files under `examples/ESP-IDF-v5.5.1/`.
+- Pull requests that change files under `examples/esp-idf/`.
 - Pull requests that change the workflow or discovery script.
 - Pushes to `main` that touch the same paths.
 - Manual runs from the GitHub Actions page.
 
-The workflow discovers buildable examples by looking for directories under `examples/ESP-IDF-v5.5.1/` that contain both:
+The workflow discovers buildable examples by looking for directories under `examples/esp-idf/` that contain both:
 
 - `CMakeLists.txt`
 - `main/`
@@ -25,7 +25,7 @@ Manual runs accept one input:
 
 | Input | Value |
 | --- | --- |
-| `example` | Defaults to `00_board_check`; accepts `all`, a directory name such as `14_lvgl_demo_v9`, or a full path such as `examples/ESP-IDF-v5.5.1/14_lvgl_demo_v9` |
+| `example` | Defaults to `00_board_check`; accepts `all`, a directory name such as `14_lvgl_demo_v9`, or a full path such as `examples/esp-idf/14_lvgl_demo_v9` |
 
 The workflow currently builds with:
 

@@ -3,14 +3,14 @@ name: ESP-IDF examples
 on:
   pull_request:
     paths:
-      - "examples/ESP-IDF-v5.5.1/**"
+      - "examples/esp-idf/**"
       - ".github/workflows/esp-idf-examples.yml"
       - ".github/scripts/discover_esp_idf_examples.py"
   push:
     branches:
       - main
     paths:
-      - "examples/ESP-IDF-v5.5.1/**"
+      - "examples/esp-idf/**"
       - ".github/workflows/esp-idf-examples.yml"
       - ".github/scripts/discover_esp_idf_examples.py"
   workflow_dispatch:

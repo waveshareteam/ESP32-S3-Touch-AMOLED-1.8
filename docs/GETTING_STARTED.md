@@ -17,7 +17,7 @@ Use ESP-IDF v5.5.x for the current ESP-IDF examples. The CI workflow builds with
 ## Build the Board Check
 
 ```bash
-cd examples/ESP-IDF-v5.5.1/00_board_check
+cd examples/esp-idf/00_board_check
 idf.py set-target esp32s3
 idf.py build
 idf.py -p PORT flash monitor
@@ -30,7 +30,7 @@ The example downloads the managed `waveshare/esp32_s3_touch_amoled_1_8` componen
 For a visual touch test, run:
 
 ```bash
-cd examples/ESP-IDF-v5.5.1/00_BSP_QuickStart
+cd examples/esp-idf/00_BSP_QuickStart
 idf.py set-target esp32s3
 idf.py build
 idf.py -p PORT flash monitor
@@ -58,7 +58,7 @@ Common entry points include `bsp_display_start()`, `bsp_display_lock()`, `bsp_di
 
 ## Example Order
 
-The BSP-component examples under `examples/ESP-IDF-v5.5.1` follow the ESP32-P4 platform learning sequence where it applies to this ESP32-S3 board: board check, project template, hello world, NVS, FreeRTOS, GPIO, I2C, SD card, Wi-Fi, audio, display, and LVGL.
+The BSP-component examples under `examples/esp-idf` follow the ESP32-P4 platform learning sequence where it applies to this ESP32-S3 board: board check, project template, hello world, NVS, FreeRTOS, GPIO, I2C, SD card, Wi-Fi, audio, display, and LVGL.
 
 See [EXAMPLES_GUIDE.md](EXAMPLES_GUIDE.md) for the full path and hardware notes.
 

@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 
-EXAMPLES_ROOT = Path("examples/ESP-IDF-v5.5.1")
+EXAMPLES_ROOT = Path("examples/esp-idf")
 DEFAULT_EXAMPLES = ("00_board_check", "00_BSP_QuickStart")
 GLOBAL_EXAMPLE_PATTERNS = (
     ".github/workflows/esp-idf-examples.yml",
