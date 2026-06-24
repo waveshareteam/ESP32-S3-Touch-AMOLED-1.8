@@ -30,7 +30,7 @@ The example downloads the managed `waveshare/esp32_s3_touch_amoled_1_8` componen
 For a visual touch test, run:
 
 ```bash
-cd examples/esp-idf/00_BSP_QuickStart
+cd examples/esp-idf/00_bsp_quickstart
 idf.py set-target esp32s3
 idf.py build
 idf.py -p PORT flash monitor
@@ -45,7 +45,7 @@ For new ESP-IDF projects, prefer this dependency in `main/idf_component.yml`:
 ```yaml
 dependencies:
   idf: ">=5.5,<6.0"
-  waveshare/esp32_s3_touch_amoled_1_8: "^1.0.0"
+  waveshare/esp32_s3_touch_amoled_1_8: "^2.0.1"
 ```
 
 Then include the BSP API:
@@ -58,7 +58,9 @@ Common entry points include `bsp_display_start()`, `bsp_display_lock()`, `bsp_di
 
 ## Example Order
 
-The BSP-component examples under `examples/esp-idf` follow the ESP32-P4 platform learning sequence where it applies to this ESP32-S3 board: board check, project template, hello world, NVS, FreeRTOS, GPIO, I2C, SD card, Wi-Fi, audio, display, and LVGL.
+The BSP-component examples under `examples/esp-idf` follow the ESP32-P4 platform learning sequence where it applies to this ESP32-S3 board: board check, BSP quick start, project template, hello world, NVS, FreeRTOS, GPIO, I2C, SD card, Wi-Fi, audio, display, and LVGL.
+
+Use `90_axp2101_pmu`, `91_pcf85063_rtc`, and `92_qmi8658_imu` only when you need low-level PMU, RTC, or IMU diagnostics.
 
 See [EXAMPLES_GUIDE.md](EXAMPLES_GUIDE.md) for the full path and hardware notes.
 

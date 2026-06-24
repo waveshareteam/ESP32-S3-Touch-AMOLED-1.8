@@ -26,45 +26,44 @@ idf.py build
 idf.py -p PORT flash monitor
 ```
 
-`00_board_check` verifies chip, flash, PSRAM, BSP capabilities, display size, I2C pins, SD pins, and audio support through the managed BSP component. For a richer first UI test, use `00_BSP_QuickStart`, which starts LVGL, shows an interactive touch dashboard, controls AMOLED brightness, and probes the onboard SD card through the BSP API.
+`00_board_check` verifies chip, flash, PSRAM, BSP capabilities, display size, I2C pins, SD pins, and audio support through the managed BSP component. For a richer first UI test, use `00_bsp_quickstart`, which starts LVGL, shows an interactive touch dashboard, controls AMOLED brightness, and probes the onboard SD card through the BSP API.
 
 ## ESP-IDF Example Highlights
 
-The ESP-IDF example set now includes a BSP-component learning path adapted from the ESP32-P4 platform examples and adjusted for ESP32-S3-Touch-AMOLED-1.8 hardware.
+The ESP-IDF example set follows the ESP32-P4 platform learning order where it applies to this board, with ESP32-S3-specific changes and lower_snake_case directory names.
 
 | Directory | Purpose | Notes |
 | --- | --- | --- |
 | [00_board_check](examples/esp-idf/00_board_check/) | Board and BSP capability check | Default CI smoke test |
-| [01_HowToCreateProject](examples/esp-idf/01_HowToCreateProject/) | Minimal managed-BSP project template | Practical new-project starting point |
-| [02_HelloWorld](examples/esp-idf/02_HelloWorld/) | ESP-IDF hello world | Chip info and restart flow |
+| [00_bsp_quickstart](examples/esp-idf/00_bsp_quickstart/) | Interactive BSP/LVGL quick start | Default CI UI smoke test |
+| [01_project_template](examples/esp-idf/01_project_template/) | Minimal managed-BSP project template | Practical new-project starting point |
+| [02_hello_world](examples/esp-idf/02_hello_world/) | ESP-IDF hello world | Chip info and restart flow |
 | [03_nvs_counter](examples/esp-idf/03_nvs_counter/) | Persistent NVS counter | Demonstrates flash-backed state |
 | [04_freertos_tasks](examples/esp-idf/04_freertos_tasks/) | FreeRTOS tasks and queue | Small producer/consumer demo |
 | [05_gpio_io](examples/esp-idf/05_gpio_io/) | GPIO input/output loopback | User-selected safe GPIOs |
 | [06_gpio_interrupt](examples/esp-idf/06_gpio_interrupt/) | GPIO interrupt handling | User-selected safe input GPIO |
 | [08_i2c_tools](examples/esp-idf/08_i2c_tools/) | I2C bus scanner | Defaults to the board I2C bus |
 | [09_sdmmc](examples/esp-idf/09_sdmmc/) | SDMMC/FAT file operations | Uses BSP SD card mounting |
-| [10_wifistation](examples/esp-idf/10_wifistation/) | Wi-Fi station connection | Configure credentials in menuconfig |
-| [12_I2SCodec](examples/esp-idf/12_I2SCodec/) | ES8311 audio playback or echo | Uses BSP audio APIs |
-| [13_Displaycolorbar](examples/esp-idf/13_Displaycolorbar/) | AMOLED color-bar rendering | Uses BSP display panel handle |
+| [10_wifi_station](examples/esp-idf/10_wifi_station/) | Wi-Fi station connection | Configure credentials in menuconfig |
+| [12_i2s_codec](examples/esp-idf/12_i2s_codec/) | ES8311 audio playback or echo | Uses BSP audio APIs |
+| [13_display_colorbar](examples/esp-idf/13_display_colorbar/) | AMOLED color-bar rendering | Uses BSP display panel handle |
 | [14_lvgl_demo_v9](examples/esp-idf/14_lvgl_demo_v9/) | LVGL v9 widgets demo | Display, touch, LVGL, brightness |
 
-Legacy low-level examples remain available for PMU, RTC, IMU, SD, LVGL, and audio compatibility checks:
+Hardware diagnostics that still require local low-level components are kept in the `90_` range so they do not compete with the managed BSP learning path:
 
 | Directory | Purpose | Notes |
 | --- | --- | --- |
-| [00_BSP_QuickStart](examples/esp-idf/00_BSP_QuickStart/) | Online BSP component quick start | Interactive LVGL smoke test |
-| [01_AXP2101](examples/esp-idf/01_AXP2101/) | PMU bring-up | Legacy local-component style |
-| [02_PCF85063](examples/esp-idf/02_PCF85063/) | RTC bring-up | Legacy local-component style |
-| [03_QMI8658](examples/esp-idf/03_QMI8658/) | IMU readings | Uses SensorLib |
-| [04_SD_MMC](examples/esp-idf/04_SD_MMC/) | SD card mount and file I/O | Board SDMMC wiring |
-| [05_LVGL_WITH_RAM](examples/esp-idf/05_LVGL_WITH_RAM/) | LVGL display/touch UI | BSP display path plus legacy fallback |
-| [06_I2SCodec](examples/esp-idf/06_I2SCodec/) | ES8311 audio playback/echo | Direct I2S codec example |
+| [90_axp2101_pmu](examples/esp-idf/90_axp2101_pmu/) | AXP2101 PMU bring-up | Legacy local-component diagnostic |
+| [91_pcf85063_rtc](examples/esp-idf/91_pcf85063_rtc/) | PCF85063 RTC bring-up | Legacy local-component diagnostic |
+| [92_qmi8658_imu](examples/esp-idf/92_qmi8658_imu/) | QMI8658 IMU readings | Uses SensorLib |
+
+The older `04_SD_MMC`, `05_LVGL_WITH_RAM`, and direct `06_I2SCodec` examples were removed because their supported workflows are covered by `09_sdmmc`, `00_bsp_quickstart`, `12_i2s_codec`, and `14_lvgl_demo_v9` through the online BSP component.
 
 See [examples/README.md](examples/README.md) and [docs/EXAMPLES_GUIDE.md](docs/EXAMPLES_GUIDE.md) for the recommended learning path.
 
 ## Continuous Integration
 
-GitHub Actions builds selected ESP-IDF examples for `esp32s3` using ESP-IDF v5.5.4. Pull requests build changed examples and always include the managed BSP smoke tests `00_board_check` and `00_BSP_QuickStart`; manual runs can build a named example or the full ESP-IDF example set.
+GitHub Actions builds selected ESP-IDF examples for `esp32s3` using ESP-IDF v5.5.4. Pull requests build changed examples and always include the managed BSP smoke tests `00_board_check` and `00_bsp_quickstart`; manual runs can build a named example or the full ESP-IDF example set.
 
 See [docs/CI.md](docs/CI.md) for workflow details.
 

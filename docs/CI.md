@@ -19,7 +19,7 @@ The workflow discovers buildable examples by looking for directories under `exam
 For pull requests and pushes, changed examples are built. The default smoke-test set is also included so CI keeps checking the managed component path even when the pull request only changes a later demo:
 
 - `00_board_check`
-- `00_BSP_QuickStart`
+- `00_bsp_quickstart`
 
 Manual runs accept one input:
 

@@ -20,32 +20,31 @@ These examples are adapted from the ESP32-P4 platform ESP-IDF example order, wit
 | Directory | Purpose | Notes |
 | --- | --- | --- |
 | [00_board_check](esp-idf/00_board_check/) | Board capability and pin summary | Good first serial-only check |
-| [01_HowToCreateProject](esp-idf/01_HowToCreateProject/) | Minimal managed-BSP project template | Declares the online BSP dependency |
-| [02_HelloWorld](esp-idf/02_HelloWorld/) | ESP-IDF hello world | Chip info, countdown, restart |
+| [00_bsp_quickstart](esp-idf/00_bsp_quickstart/) | Interactive BSP/LVGL quick start | Display, touch, brightness, SD probe |
+| [01_project_template](esp-idf/01_project_template/) | Minimal managed-BSP project template | Declares the online BSP dependency |
+| [02_hello_world](esp-idf/02_hello_world/) | ESP-IDF hello world | Chip info, countdown, restart |
 | [03_nvs_counter](esp-idf/03_nvs_counter/) | NVS persistent boot counter | Demonstrates flash-backed state |
 | [04_freertos_tasks](esp-idf/04_freertos_tasks/) | FreeRTOS task and queue demo | Producer/consumer logging |
 | [05_gpio_io](esp-idf/05_gpio_io/) | GPIO input/output loopback | Choose safe exposed pins in menuconfig |
 | [06_gpio_interrupt](esp-idf/06_gpio_interrupt/) | GPIO interrupt handling | Choose safe exposed input pin in menuconfig |
 | [08_i2c_tools](esp-idf/08_i2c_tools/) | I2C scan tool | Defaults to the onboard I2C bus |
 | [09_sdmmc](esp-idf/09_sdmmc/) | SDMMC/FAT example | Mounts through the BSP SD API |
-| [10_wifistation](esp-idf/10_wifistation/) | Wi-Fi station example | Configure credentials in menuconfig |
-| [12_I2SCodec](esp-idf/12_I2SCodec/) | ES8311 playback or microphone echo | Uses BSP audio codec handles |
-| [13_Displaycolorbar](esp-idf/13_Displaycolorbar/) | Display color-bar rendering | Draws RGB565 bars through the BSP panel |
+| [10_wifi_station](esp-idf/10_wifi_station/) | Wi-Fi station example | Configure credentials in menuconfig |
+| [12_i2s_codec](esp-idf/12_i2s_codec/) | ES8311 playback or microphone echo | Uses BSP audio codec handles |
+| [13_display_colorbar](esp-idf/13_display_colorbar/) | Display color-bar rendering | Draws RGB565 bars through the BSP panel |
 | [14_lvgl_demo_v9](esp-idf/14_lvgl_demo_v9/) | LVGL v9 widgets demo | Uses BSP display, touch, LVGL, brightness |
 
-## Legacy Hardware Examples
+## Hardware Diagnostics
 
-The original ESP-IDF examples are kept for hardware-specific bring-up and compatibility checks. They may include local component copies or older structure, but remain useful when validating individual peripherals.
+These examples are kept for board-specific bring-up that still needs local low-level components. They are grouped in the `90_` range so the main path stays focused on the managed online BSP.
 
 | Directory | Purpose | Notes |
 | --- | --- | --- |
-| [00_BSP_QuickStart](esp-idf/00_BSP_QuickStart/) | Managed BSP component quick start | Interactive LVGL smoke test |
-| [01_AXP2101](esp-idf/01_AXP2101/) | PMU check | Legacy local-component example |
-| [02_PCF85063](esp-idf/02_PCF85063/) | RTC check | Legacy local-component example |
-| [03_QMI8658](esp-idf/03_QMI8658/) | IMU acceleration and gyro readings | Uses SensorLib |
-| [04_SD_MMC](esp-idf/04_SD_MMC/) | SD card mount and file I/O | Requires a formatted microSD card |
-| [05_LVGL_WITH_RAM](esp-idf/05_LVGL_WITH_RAM/) | AMOLED touch UI with LVGL | Uses PSRAM-backed draw buffers |
-| [06_I2SCodec](esp-idf/06_I2SCodec/) | ES8311 music/echo demo | Requires speaker or headphones |
+| [90_axp2101_pmu](esp-idf/90_axp2101_pmu/) | PMU check | Legacy local-component diagnostic |
+| [91_pcf85063_rtc](esp-idf/91_pcf85063_rtc/) | RTC check | Legacy local-component diagnostic |
+| [92_qmi8658_imu](esp-idf/92_qmi8658_imu/) | IMU acceleration and gyro readings | Uses SensorLib |
+
+The previous local-component SD, LVGL-with-RAM, and direct I2S codec demos were removed to avoid duplicate workflows. Use `09_sdmmc`, `00_bsp_quickstart`, `12_i2s_codec`, and `14_lvgl_demo_v9` for those paths.
 
 ## Arduino
 

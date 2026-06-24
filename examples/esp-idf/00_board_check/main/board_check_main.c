@@ -64,7 +64,7 @@ void app_main(void)
     printf("Internal heap free: %u bytes\n", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
     printf("Minimum free heap: %" PRIu32 " bytes\n", esp_get_minimum_free_heap_size());
     printf("\n");
-    printf("Next steps: run 08_i2c_tools, 09_sdmmc, 12_I2SCodec, 13_Displaycolorbar, or 14_lvgl_demo_v9.\n");
+    printf("Next steps: run 00_bsp_quickstart, 08_i2c_tools, 09_sdmmc, 12_i2s_codec, 13_display_colorbar, or 14_lvgl_demo_v9.\n");
     printf("\n");
 
     while (true) {
