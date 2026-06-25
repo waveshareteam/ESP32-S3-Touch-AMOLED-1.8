@@ -60,7 +60,7 @@ Common entry points include `bsp_display_start()`, `bsp_display_lock()`, `bsp_di
 
 The BSP-component examples under `examples/esp-idf` follow the ESP32-P4 platform learning sequence where it applies to this ESP32-S3 board: board check, BSP quick start, project template, hello world, NVS, FreeRTOS, GPIO, I2C, SD card, Wi-Fi, audio, display, and LVGL.
 
-Use `90_axp2101_pmu`, `91_pcf85063_rtc`, and `92_qmi8658_imu` only when you need low-level PMU, RTC, or IMU diagnostics.
+Use `90_axp2101_pmu`, `91_pcf85063_rtc`, and `92_qmi8658_imu` only when you need low-level PMU, RTC, or IMU diagnostics. The RTC and IMU examples use managed Waveshare sensor components, while the PMU example remains a local diagnostic.
 
 See [EXAMPLES_GUIDE.md](EXAMPLES_GUIDE.md) for the full path and hardware notes.
 

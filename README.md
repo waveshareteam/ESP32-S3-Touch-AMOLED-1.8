@@ -49,13 +49,13 @@ The ESP-IDF example set follows the ESP32-P4 platform learning order where it ap
 | [13_display_colorbar](examples/esp-idf/13_display_colorbar/) | AMOLED color-bar rendering | Uses BSP display panel handle |
 | [14_lvgl_demo_v9](examples/esp-idf/14_lvgl_demo_v9/) | LVGL v9 widgets demo | Display, touch, LVGL, brightness |
 
-Hardware diagnostics that still require local low-level components are kept in the `90_` range so they do not compete with the managed BSP learning path:
+Additional hardware diagnostics are kept in the `90_` range so they do not compete with the managed BSP learning path. RTC and IMU diagnostics now use Waveshare online components; the PMU example remains a local low-level diagnostic:
 
 | Directory | Purpose | Notes |
 | --- | --- | --- |
-| [90_axp2101_pmu](examples/esp-idf/90_axp2101_pmu/) | AXP2101 PMU bring-up | Legacy local-component diagnostic |
-| [91_pcf85063_rtc](examples/esp-idf/91_pcf85063_rtc/) | PCF85063 RTC bring-up | Legacy local-component diagnostic |
-| [92_qmi8658_imu](examples/esp-idf/92_qmi8658_imu/) | QMI8658 IMU readings | Uses SensorLib |
+| [90_axp2101_pmu](examples/esp-idf/90_axp2101_pmu/) | AXP2101 PMU bring-up | Local-component diagnostic |
+| [91_pcf85063_rtc](examples/esp-idf/91_pcf85063_rtc/) | PCF85063A RTC bring-up | Uses `waveshare/pcf85063a` |
+| [92_qmi8658_imu](examples/esp-idf/92_qmi8658_imu/) | QMI8658 IMU readings | Uses `waveshare/qmi8658` |
 
 The older `04_SD_MMC`, `05_LVGL_WITH_RAM`, and direct `06_I2SCodec` examples were removed because their supported workflows are covered by `09_sdmmc`, `00_bsp_quickstart`, `12_i2s_codec`, and `14_lvgl_demo_v9` through the online BSP component.
 

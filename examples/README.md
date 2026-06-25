@@ -36,13 +36,13 @@ These examples are adapted from the ESP32-P4 platform ESP-IDF example order, wit
 
 ## Hardware Diagnostics
 
-These examples are kept for board-specific bring-up that still needs local low-level components. They are grouped in the `90_` range so the main path stays focused on the managed online BSP.
+These examples are kept for board-specific bring-up beyond the main BSP path. They are grouped in the `90_` range so the main path stays focused on the managed online BSP; RTC and IMU checks use managed Waveshare sensor components.
 
 | Directory | Purpose | Notes |
 | --- | --- | --- |
-| [90_axp2101_pmu](esp-idf/90_axp2101_pmu/) | PMU check | Legacy local-component diagnostic |
-| [91_pcf85063_rtc](esp-idf/91_pcf85063_rtc/) | RTC check | Legacy local-component diagnostic |
-| [92_qmi8658_imu](esp-idf/92_qmi8658_imu/) | IMU acceleration and gyro readings | Uses SensorLib |
+| [90_axp2101_pmu](esp-idf/90_axp2101_pmu/) | PMU check | Local-component diagnostic |
+| [91_pcf85063_rtc](esp-idf/91_pcf85063_rtc/) | RTC check | Uses `waveshare/pcf85063a` |
+| [92_qmi8658_imu](esp-idf/92_qmi8658_imu/) | IMU acceleration and gyro readings | Uses `waveshare/qmi8658` |
 
 The previous local-component SD, LVGL-with-RAM, and direct I2S codec demos were removed to avoid duplicate workflows. Use `09_sdmmc`, `00_bsp_quickstart`, `12_i2s_codec`, and `14_lvgl_demo_v9` for those paths.
 

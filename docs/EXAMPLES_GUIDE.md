@@ -18,13 +18,13 @@ Start with serial-only checks, then move outward to board services, peripherals,
 
 ## Hardware Diagnostics
 
-The older local-component examples are limited to board-specific diagnostics that are not fully represented by the managed-BSP learning path:
+Board-specific diagnostics that are not fully represented by the managed-BSP learning path are kept in the `90_` range:
 
 | Directory | Use when you need to check |
 | --- | --- |
-| [90_axp2101_pmu](../examples/esp-idf/90_axp2101_pmu/) | AXP2101 PMU register bring-up |
-| [91_pcf85063_rtc](../examples/esp-idf/91_pcf85063_rtc/) | PCF85063 RTC timekeeping |
-| [92_qmi8658_imu](../examples/esp-idf/92_qmi8658_imu/) | QMI8658 acceleration, gyro, temperature, and timestamps |
+| [90_axp2101_pmu](../examples/esp-idf/90_axp2101_pmu/) | AXP2101 PMU register bring-up with the local diagnostic component |
+| [91_pcf85063_rtc](../examples/esp-idf/91_pcf85063_rtc/) | PCF85063A RTC timekeeping through `waveshare/pcf85063a` |
+| [92_qmi8658_imu](../examples/esp-idf/92_qmi8658_imu/) | QMI8658 acceleration, gyro, temperature, and timestamps through `waveshare/qmi8658` |
 
 The former local `04_SD_MMC`, `05_LVGL_WITH_RAM`, and direct `06_I2SCodec` demos were removed because the managed BSP examples cover those workflows with less duplicated driver code.
 
@@ -38,7 +38,7 @@ dependencies:
   waveshare/esp32_s3_touch_amoled_1_8: "^2.0.1"
 ```
 
-The ESP Component Registry lists `2.0.1` as the latest `waveshare/esp32_s3_touch_amoled_1_8` release for `esp32s3` as of 2026-06-24. Checked-in component copies should only be used when an example intentionally demonstrates a local patch or a compatibility fallback.
+The ESP Component Registry lists `2.0.1` as the latest `waveshare/esp32_s3_touch_amoled_1_8` release for `esp32s3` as of 2026-06-24. Checked-in component copies should only be used when an example intentionally demonstrates a local patch or a compatibility fallback. The RTC and IMU diagnostics use `waveshare/pcf85063a` `^2.0.0` and `waveshare/qmi8658` `^2.0.0`.
 
 ## CI Coverage
 

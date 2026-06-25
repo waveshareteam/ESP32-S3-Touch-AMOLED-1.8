@@ -2,14 +2,29 @@
 
 QMI8658 IMU diagnostic for the Waveshare ESP32-S3-Touch-AMOLED-1.8 board.
 
-This is a legacy local-component example. It is kept for direct accelerometer and gyroscope bring-up with the bundled SensorLib source.
+This example uses the managed `waveshare/qmi8658` component instead of the older checked-in driver copy. It keeps the code small and focused on the board-level IMU bring-up path.
 
 ## What It Checks
 
 - Detects the board display/touch variant through the local `board_variant` helper.
 - Opens the onboard I2C bus on SDA 15 and SCL 14.
-- Initializes QMI8658 at address `0x6B`.
-- Logs accelerometer, gyroscope, temperature, and timestamp data.
+- Probes QMI8658 address `0x6B`, then `0x6A` as a fallback.
+- Reads and logs the `WHO_AM_I` register.
+- Configures accelerometer range `4G` at `250 Hz`.
+- Configures gyroscope range `256 dps` at `250 Hz`.
+- Logs accelerometer, gyroscope, temperature, and timestamp data every 200 ms when data is ready.
+
+## Managed Component
+
+The dependency is declared in [main/idf_component.yml](main/idf_component.yml):
+
+```yaml
+dependencies:
+  idf: ">=5.5,<6.0"
+  waveshare/qmi8658:
+    version: "^2.0.0"
+    public: true
+```
 
 ## Build and Flash
 
@@ -23,5 +38,6 @@ Replace `PORT` with the board serial port.
 
 ## Notes
 
-- This diagnostic carries local SensorLib and board-variant helper code. It is not intended as a new-project template.
-- Use `08_i2c_tools` first if QMI8658 is not detected, then use this example for sensor-specific checks.
+- Use `08_i2c_tools` first if QMI8658 is not detected.
+- The example reports acceleration in `m/s^2` and angular rate in `dps`.
+- For new application structure, start from `01_project_template` and add only the sensor components you need.
