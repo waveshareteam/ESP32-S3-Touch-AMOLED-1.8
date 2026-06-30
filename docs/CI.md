@@ -31,6 +31,8 @@ The workflow currently builds with:
 
 Arduino examples are intentionally not built by this workflow yet.
 
+Pull requests that only change Arduino examples or bundled Arduino libraries do not trigger this ESP-IDF workflow.
+
 ## Local Script Checks
 
 The discovery helper can be run without building firmware:

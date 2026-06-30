@@ -13,6 +13,8 @@ idf.py build
 idf.py -p PORT flash monitor
 ```
 
+Replace `PORT` with the serial port for the board.
+
 ## BSP Component Examples
 
 These examples are adapted from the ESP32-P4 platform ESP-IDF example order, with hardware-specific changes for ESP32-S3-Touch-AMOLED-1.8 and the managed `waveshare/esp32_s3_touch_amoled_1_8` component.
@@ -66,5 +68,6 @@ Keep new examples focused and easy to build:
 - Prefer managed components in `main/idf_component.yml` over checked-in component copies.
 - Document required hardware, menuconfig options, expected serial output, and safety notes.
 - Do not commit generated `build/`, `managed_components/`, dependency lock files, or local `sdkconfig` files unless intentionally curated.
+- Keep public instructions generic and repository-relative; do not include local machine paths or private network paths.
 
 See [../docs/EXAMPLES_GUIDE.md](../docs/EXAMPLES_GUIDE.md) for the suggested learning path.

@@ -43,3 +43,7 @@ The ESP Component Registry lists `2.0.1` as the latest `waveshare/esp32_s3_touch
 ## CI Coverage
 
 The GitHub Actions workflow builds ESP-IDF examples that are changed in a pull request. Workflow or discovery-script changes build the full ESP-IDF example set. See [CI.md](CI.md) for details.
+
+## Customer-Facing Checklist
+
+Before publishing or changing an example, make sure its README includes the required hardware, build commands, configuration options, expected result, and any safety notes. Keep public documentation free of local machine paths, private network paths, usernames, generated build directories, and temporary troubleshooting notes.

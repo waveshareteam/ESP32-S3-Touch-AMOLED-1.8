@@ -1,5 +1,7 @@
 # ESP32-S3-Touch-AMOLED-1.8
 
+[中文版本](README_CN.md)
+
 Engineering examples and firmware assets for the Waveshare ESP32-S3-Touch-AMOLED-1.8 board.
 
 The board combines an ESP32-S3 module, a 1.8-inch 368 x 448 AMOLED touch display, SD card support, an ES8311 audio codec, onboard microphone input, an RTC, a PMU, and an IMU. The ESP-IDF examples prefer the managed `waveshare/esp32_s3_touch_amoled_1_8` BSP component so new projects can start from the same online component used by the current board support package.
@@ -14,6 +16,11 @@ The board combines an ESP32-S3 module, a 1.8-inch 368 x 448 AMOLED touch display
 | [examples/Arduino-v3.3.5-v2/](examples/Arduino-v3.3.5-v2/) | Arduino examples for the newer board package |
 | [Firmware/](Firmware/README.txt) | Prebuilt factory firmware images |
 | [docs/](docs/GETTING_STARTED.md) | Setup, example, and CI documentation |
+| [README_CN.md](README_CN.md) | Chinese overview and quick start |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution and example style guide |
+| [SUPPORT.md](SUPPORT.md) | Support channels and issue-reporting checklist |
+| [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | Community participation expectations |
+| [THIRD_PARTY.md](THIRD_PARTY.md) | Third-party component and bundled-library notes |
 
 ## Recommended ESP-IDF Flow
 
@@ -73,8 +80,12 @@ See [docs/CI.md](docs/CI.md) for workflow details.
 - Component Registry: https://components.espressif.com/components/waveshare/esp32_s3_touch_amoled_1_8
 - Issues: https://github.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/issues
 
-For hardware support, include the board revision, the example path, ESP-IDF version, serial log, and any external devices connected to the board.
+For hardware support, include the board revision, the example path, ESP-IDF version, serial log, and any external devices connected to the board. See [SUPPORT.md](SUPPORT.md) for the full issue checklist.
+
+## Contributing
+
+Pull requests are welcome for example fixes, documentation updates, and board-specific diagnostics. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before adding examples or changing CI behavior.
 
 ## License
 
-Unless noted otherwise in a subdirectory, source files in this repository are provided under the Apache License 2.0. Third-party libraries keep their own licenses and notices.
+Unless noted otherwise in a subdirectory, source files in this repository are provided under the Apache License 2.0. Third-party libraries keep their own licenses and notices; see [THIRD_PARTY.md](THIRD_PARTY.md).
