@@ -1,0 +1,15 @@
+menu "Example GPIO interrupt configuration"
+    config EXAMPLE_GPIO_INPUT
+        int "Interrupt input GPIO number"
+        default -1
+        help
+            Set to an exposed, unused GPIO. Leave at -1 to run in no-hardware dry-run mode.
+
+    config EXAMPLE_GPIO_INPUT_PULLUP
+        bool "Enable input pull-up"
+        default y
+
+    config EXAMPLE_DEBOUNCE_MS
+        int "Debounce time in milliseconds"
+        default 50
+endmenu

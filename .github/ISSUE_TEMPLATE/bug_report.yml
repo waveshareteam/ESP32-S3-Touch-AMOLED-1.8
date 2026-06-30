@@ -1,0 +1,66 @@
+name: Bug report
+description: Report a reproducible board, example, or documentation issue.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve the ESP32-S3-Touch-AMOLED-1.8 examples.
+  - type: input
+    id: board
+    attributes:
+      label: Board and revision
+      description: Include the board name and hardware revision if available.
+      placeholder: ESP32-S3-Touch-AMOLED-1.8, revision ...
+    validations:
+      required: true
+  - type: input
+    id: example
+    attributes:
+      label: Example or file path
+      placeholder: examples/esp-idf/00_board_check
+    validations:
+      required: true
+  - type: input
+    id: idf_version
+    attributes:
+      label: ESP-IDF or Arduino version
+      placeholder: ESP-IDF v5.5.4
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the commands and hardware setup needed to reproduce the issue.
+      placeholder: |
+        1. Build ...
+        2. Flash ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Serial log or build output
+      description: Paste the relevant log from reset through the failure. Remove Wi-Fi passwords or other secrets.
+      render: text
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: Include connected peripherals, SD card details, speaker/headphone setup, or photos if useful.

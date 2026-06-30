@@ -1,0 +1,32 @@
+menu "Example Wi-Fi station configuration"
+    config ESP_WIFI_SSID
+        string "Wi-Fi SSID"
+        default ""
+
+    config ESP_WIFI_PASSWORD
+        string "Wi-Fi password"
+        default ""
+
+    config ESP_MAXIMUM_RETRY
+        int "Maximum retry count"
+        default 5
+
+    choice ESP_WIFI_SCAN_AUTH_MODE_THRESHOLD
+        prompt "Minimum auth mode"
+        default ESP_WIFI_AUTH_WPA2_PSK
+        config ESP_WIFI_AUTH_OPEN
+            bool "Open"
+        config ESP_WIFI_AUTH_WEP
+            bool "WEP"
+        config ESP_WIFI_AUTH_WPA_PSK
+            bool "WPA PSK"
+        config ESP_WIFI_AUTH_WPA2_PSK
+            bool "WPA2 PSK"
+        config ESP_WIFI_AUTH_WPA_WPA2_PSK
+            bool "WPA/WPA2 PSK"
+        config ESP_WIFI_AUTH_WPA3_PSK
+            bool "WPA3 PSK"
+        config ESP_WIFI_AUTH_WPA2_WPA3_PSK
+            bool "WPA2/WPA3 PSK"
+    endchoice
+endmenu

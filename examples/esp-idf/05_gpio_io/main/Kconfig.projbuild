@@ -1,0 +1,17 @@
+menu "Example GPIO configuration"
+    config EXAMPLE_GPIO_OUTPUT
+        int "Output GPIO number"
+        default -1
+        help
+            Set to an exposed, unused GPIO. Leave at -1 to run in no-hardware dry-run mode.
+
+    config EXAMPLE_GPIO_INPUT
+        int "Input GPIO number"
+        default -1
+        help
+            Set to an exposed, unused GPIO. For loopback tests, connect this pin to the output GPIO.
+
+    config EXAMPLE_GPIO_INPUT_PULLUP
+        bool "Enable input pull-up"
+        default y
+endmenu
