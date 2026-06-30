@@ -34,8 +34,8 @@ The ESP-IDF example set follows the ESP32-P4 platform learning order where it ap
 
 | Directory | Purpose | Notes |
 | --- | --- | --- |
-| [00_board_check](examples/esp-idf/00_board_check/) | Board and BSP capability check | Default CI smoke test |
-| [00_bsp_quickstart](examples/esp-idf/00_bsp_quickstart/) | Interactive BSP/LVGL quick start | Default CI UI smoke test |
+| [00_board_check](examples/esp-idf/00_board_check/) | Board and BSP capability check | Serial-first smoke test |
+| [00_bsp_quickstart](examples/esp-idf/00_bsp_quickstart/) | Interactive BSP/LVGL quick start | UI smoke test |
 | [01_project_template](examples/esp-idf/01_project_template/) | Minimal managed-BSP project template | Practical new-project starting point |
 | [02_hello_world](examples/esp-idf/02_hello_world/) | ESP-IDF hello world | Chip info and restart flow |
 | [03_nvs_counter](examples/esp-idf/03_nvs_counter/) | Persistent NVS counter | Demonstrates flash-backed state |
@@ -45,7 +45,7 @@ The ESP-IDF example set follows the ESP32-P4 platform learning order where it ap
 | [08_i2c_tools](examples/esp-idf/08_i2c_tools/) | I2C bus scanner | Defaults to the board I2C bus |
 | [09_sdmmc](examples/esp-idf/09_sdmmc/) | SDMMC/FAT file operations | Uses BSP SD card mounting |
 | [10_wifi_station](examples/esp-idf/10_wifi_station/) | Wi-Fi station connection | Configure credentials in menuconfig |
-| [12_i2s_codec](examples/esp-idf/12_i2s_codec/) | ES8311 audio playback or echo | Uses BSP audio APIs |
+| [12_i2s_codec](examples/esp-idf/12_i2s_codec/) | ES8311 speaker playback | Uses BSP audio APIs |
 | [13_display_colorbar](examples/esp-idf/13_display_colorbar/) | AMOLED color-bar rendering | Uses BSP display panel handle |
 | [14_lvgl_demo_v9](examples/esp-idf/14_lvgl_demo_v9/) | LVGL v9 widgets demo | Display, touch, LVGL, brightness |
 
@@ -63,7 +63,7 @@ See [examples/README.md](examples/README.md) and [docs/EXAMPLES_GUIDE.md](docs/E
 
 ## Continuous Integration
 
-GitHub Actions builds selected ESP-IDF examples for `esp32s3` using ESP-IDF v5.5.4. Pull requests build changed examples and always include the managed BSP smoke tests `00_board_check` and `00_bsp_quickstart`; manual runs can build a named example or the full ESP-IDF example set.
+GitHub Actions builds selected ESP-IDF examples for `esp32s3` using ESP-IDF v5.5.4. Pull requests build changed ESP-IDF examples; workflow or discovery-script changes build the full ESP-IDF example set. Manual runs can build a named example or all ESP-IDF examples.
 
 See [docs/CI.md](docs/CI.md) for workflow details.
 

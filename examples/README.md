@@ -30,7 +30,7 @@ These examples are adapted from the ESP32-P4 platform ESP-IDF example order, wit
 | [08_i2c_tools](esp-idf/08_i2c_tools/) | I2C scan tool | Defaults to the onboard I2C bus |
 | [09_sdmmc](esp-idf/09_sdmmc/) | SDMMC/FAT example | Mounts through the BSP SD API |
 | [10_wifi_station](esp-idf/10_wifi_station/) | Wi-Fi station example | Configure credentials in menuconfig |
-| [12_i2s_codec](esp-idf/12_i2s_codec/) | ES8311 playback or microphone echo | Uses BSP audio codec handles |
+| [12_i2s_codec](esp-idf/12_i2s_codec/) | ES8311 speaker playback | Uses BSP audio codec handles |
 | [13_display_colorbar](esp-idf/13_display_colorbar/) | Display color-bar rendering | Draws RGB565 bars through the BSP panel |
 | [14_lvgl_demo_v9](esp-idf/14_lvgl_demo_v9/) | LVGL v9 widgets demo | Uses BSP display, touch, LVGL, brightness |
 

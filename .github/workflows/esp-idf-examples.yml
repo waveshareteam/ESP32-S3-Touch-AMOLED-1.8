@@ -18,7 +18,7 @@ on:
       example:
         description: "ESP-IDF example directory name, path, or all"
         required: false
-        default: "00_board_check"
+        default: "all"
 
 permissions:
   contents: read
@@ -50,7 +50,7 @@ jobs:
             python .github/scripts/discover_esp_idf_examples.py \
               --base-ref "${{ github.event.pull_request.base.sha }}" \
               --head-ref "${{ github.sha }}" \
-              --fallback-default
+              --fallback-all
           else
             before="${{ github.event.before }}"
             if [[ "$before" == "0000000000000000000000000000000000000000" ]]; then
@@ -59,7 +59,7 @@ jobs:
             python .github/scripts/discover_esp_idf_examples.py \
               --base-ref "$before" \
               --head-ref "${{ github.sha }}" \
-              --fallback-default
+              --fallback-all
           fi
 
       - name: Summary

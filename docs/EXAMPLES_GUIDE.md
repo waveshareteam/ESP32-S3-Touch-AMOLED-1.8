@@ -12,7 +12,7 @@ Start with serial-only checks, then move outward to board services, peripherals,
 6. [08_i2c_tools](../examples/esp-idf/08_i2c_tools/) scans the onboard I2C bus and is useful before debugging PMU, RTC, touch, or audio-control devices.
 7. [09_sdmmc](../examples/esp-idf/09_sdmmc/) mounts the microSD card through the managed BSP and performs FAT file operations.
 8. [10_wifi_station](../examples/esp-idf/10_wifi_station/) connects the ESP32-S3 to an access point with menuconfig-provided credentials.
-9. [12_i2s_codec](../examples/esp-idf/12_i2s_codec/) validates ES8311 speaker playback or microphone echo mode through BSP audio APIs.
+9. [12_i2s_codec](../examples/esp-idf/12_i2s_codec/) validates ES8311 speaker playback through BSP audio APIs.
 10. [13_display_colorbar](../examples/esp-idf/13_display_colorbar/) draws RGB565 test bars directly through the BSP display panel handle.
 11. [14_lvgl_demo_v9](../examples/esp-idf/14_lvgl_demo_v9/) starts the LVGL v9 widgets demo with BSP display, touch, LVGL port, and brightness control.
 
@@ -42,4 +42,4 @@ The ESP Component Registry lists `2.0.1` as the latest `waveshare/esp32_s3_touch
 
 ## CI Coverage
 
-The GitHub Actions workflow builds examples that are changed in a pull request and always includes `00_board_check` and `00_bsp_quickstart` as smoke tests. See [CI.md](CI.md) for details.
+The GitHub Actions workflow builds ESP-IDF examples that are changed in a pull request. Workflow or discovery-script changes build the full ESP-IDF example set. See [CI.md](CI.md) for details.

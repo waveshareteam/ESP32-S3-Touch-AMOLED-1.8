@@ -16,16 +16,13 @@ The workflow discovers buildable examples by looking for directories under `exam
 - `CMakeLists.txt`
 - `main/`
 
-For pull requests and pushes, changed examples are built. The default smoke-test set is also included so CI keeps checking the managed component path even when the pull request only changes a later demo:
-
-- `00_board_check`
-- `00_bsp_quickstart`
+For pull requests and pushes, only changed ESP-IDF examples are built. If the workflow or discovery script changes, the workflow builds all ESP-IDF examples because those files affect the entire CI surface.
 
 Manual runs accept one input:
 
 | Input | Value |
 | --- | --- |
-| `example` | Defaults to `00_board_check`; accepts `all`, a directory name such as `14_lvgl_demo_v9`, or a full path such as `examples/esp-idf/14_lvgl_demo_v9` |
+| `example` | Defaults to `all`; accepts `all`, a directory name such as `14_lvgl_demo_v9`, or a full path such as `examples/esp-idf/14_lvgl_demo_v9` |
 
 The workflow currently builds with:
 

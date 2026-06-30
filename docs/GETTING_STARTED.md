@@ -7,7 +7,7 @@ This guide uses the ESP-IDF examples for the Waveshare ESP32-S3-Touch-AMOLED-1.8
 - Waveshare ESP32-S3-Touch-AMOLED-1.8 board
 - USB cable with data support
 - Optional microSD card for SD examples
-- Optional speaker, headphones, or microphone path for audio examples
+- Optional speaker or headphones for audio examples
 - Optional jumper wires for GPIO loopback or interrupt examples
 
 ## ESP-IDF Version
@@ -54,7 +54,7 @@ Then include the BSP API:
 #include "bsp/esp-bsp.h"
 ```
 
-Common entry points include `bsp_display_start()`, `bsp_display_lock()`, `bsp_display_brightness_set()`, `bsp_sdcard_mount()`, `bsp_audio_init()`, `bsp_audio_codec_speaker_init()`, and `bsp_audio_codec_microphone_init()`.
+Common entry points include `bsp_display_start()`, `bsp_display_lock()`, `bsp_display_brightness_set()`, `bsp_sdcard_mount()`, `bsp_audio_init()`, and `bsp_audio_codec_speaker_init()`.
 
 ## Example Order
 

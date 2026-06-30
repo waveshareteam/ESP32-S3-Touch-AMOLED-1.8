@@ -13,7 +13,6 @@ from pathlib import Path
 
 
 EXAMPLES_ROOT = Path("examples/esp-idf")
-DEFAULT_EXAMPLES = ("00_board_check", "00_bsp_quickstart")
 GLOBAL_EXAMPLE_PATTERNS = (
     ".github/workflows/esp-idf-examples.yml",
     ".github/scripts/discover_esp_idf_examples.py",
@@ -41,15 +40,6 @@ def list_examples() -> list[str]:
     return sorted(examples)
 
 
-def default_examples(known_examples: set[str]) -> list[str]:
-    selected = []
-    for name in DEFAULT_EXAMPLES:
-        example = (EXAMPLES_ROOT / name).as_posix()
-        if example in known_examples:
-            selected.append(example)
-    return selected
-
-
 def normalize_example(value: str) -> str:
     value = value.strip().strip("/")
     if not value:
@@ -68,7 +58,7 @@ def discover_from_paths(paths: list[str], known_examples: set[str]) -> list[str]
     for changed_path in paths:
         changed_path = changed_path.strip().strip("/")
         if any(fnmatch.fnmatch(changed_path, pattern) for pattern in GLOBAL_EXAMPLE_PATTERNS):
-            selected.update(default_examples(known_examples))
+            selected.update(known_examples)
             continue
 
         if not changed_path.startswith(root_prefix):
@@ -76,14 +66,13 @@ def discover_from_paths(paths: list[str], known_examples: set[str]) -> list[str]
 
         parts = Path(changed_path).parts
         if len(parts) < 3:
-            selected.update(default_examples(known_examples))
+            selected.update(known_examples)
             continue
 
         example = Path(*parts[:3]).as_posix()
         if example in known_examples:
             selected.add(example)
 
-    selected.update(default_examples(known_examples))
     return sorted(selected)
 
 
@@ -109,9 +98,9 @@ def main() -> int:
     parser.add_argument("--head-ref", default="HEAD")
     parser.add_argument("--example", default="")
     parser.add_argument(
-        "--fallback-default",
+        "--fallback-all",
         action="store_true",
-        help="Build the default smoke-test examples when no changed example is detected.",
+        help="Build all examples when no changed example is detected.",
     )
     args = parser.parse_args()
 
@@ -130,8 +119,8 @@ def main() -> int:
         selected = [requested_example]
     else:
         selected = discover_changed_examples(args.base_ref, args.head_ref, known_examples)
-        if args.fallback_default and not selected:
-            selected = default_examples(known_examples)
+        if args.fallback_all and not selected:
+            selected = sorted(known_examples)
 
     matrix = {"example": selected}
     matrix_json = json.dumps(matrix, separators=(",", ":"))

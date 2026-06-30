@@ -1,22 +1,16 @@
 menu "Example audio configuration"
-    choice EXAMPLE_AUDIO_MODE
-        prompt "Audio mode"
-        default EXAMPLE_MODE_MUSIC
-        config EXAMPLE_MODE_MUSIC
-            bool "Speaker sine wave"
-        config EXAMPLE_MODE_ECHO
-            bool "Microphone echo"
-    endchoice
-
     config EXAMPLE_SAMPLE_RATE
         int "Sample rate"
+        range 8000 48000
         default 22050
 
     config EXAMPLE_VOICE_VOLUME
         int "Speaker volume"
+        range 0 100
         default 70
 
     config EXAMPLE_TONE_HZ
         int "Music test tone frequency"
+        range 100 2000
         default 440
 endmenu
