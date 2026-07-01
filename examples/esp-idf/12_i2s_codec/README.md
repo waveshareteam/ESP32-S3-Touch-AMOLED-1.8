@@ -2,7 +2,9 @@
 
 ES8311 audio demo adapted from the ESP32-P4 platform example for this ESP32-S3 board.
 
-This version uses the online BSP audio APIs and plays a sine wave through the ES8311 speaker output. It intentionally avoids microphone echo mode because this board uses a single ES8311 codec path.
+This version uses the BSP board definitions and plays a sine wave through the ES8311 speaker output. It intentionally avoids microphone echo mode because this board uses a single ES8311 codec path.
+
+The demo follows the ESP32-P4 I2S codec example structure: configure I2S first, initialize the codec control path next, then start playback. The ES8311 setup is kept in the example so initialization failures are reported as errors instead of triggering BSP helper assertions.
 
 ## Hardware
 
@@ -38,5 +40,6 @@ The serial monitor reports ES8311 speaker initialization and repeated audio writ
 ## Troubleshooting
 
 - If codec initialization fails, the example logs the error and stays idle instead of aborting into a reboot loop.
+- A boot loop with `i2c_ctrl_if` in `bsp_audio_codec_speaker_init` indicates an older build is still using the BSP speaker helper. Rebuild and flash the current example.
 - Use `08_i2c_tools` if the codec control interface is not detected.
 - Confirm the connected output accessory and volume before assuming an I2S failure.

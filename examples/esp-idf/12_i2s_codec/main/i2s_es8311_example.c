@@ -3,6 +3,8 @@
 #include <stdio.h>
 
 #include "bsp/esp-bsp.h"
+#include "driver/i2s_std.h"
+#include "esp_codec_dev_defaults.h"
 #include "esp_check.h"
 #include "esp_codec_dev.h"
 #include "esp_err.h"
@@ -12,10 +14,13 @@
 #include "sdkconfig.h"
 
 static const char *TAG = "i2s_codec_bsp";
-#define AUDIO_CHANNELS 2
+#define AUDIO_CHANNELS 1
 #define AUDIO_BITS_PER_SAMPLE 16
 #define AUDIO_FRAME_COUNT 256
 #define AUDIO_TWO_PI 6.28318530717958647692f
+
+static i2s_chan_handle_t tx_handle = NULL;
+static i2s_chan_handle_t rx_handle = NULL;
 
 static esp_codec_dev_sample_info_t sample_info(void)
 {
@@ -39,13 +44,88 @@ static esp_err_t codec_dev_to_esp_err(int ret, const char *operation)
     return ESP_FAIL;
 }
 
-static esp_err_t speaker_codec_init(esp_codec_dev_handle_t *speaker)
+static esp_err_t i2s_driver_init(const audio_codec_data_if_t **data_if)
 {
-    ESP_LOGI(TAG, "Initializing ES8311 speaker codec through managed BSP");
-    ESP_RETURN_ON_ERROR(bsp_audio_init(NULL), TAG, "bsp audio init failed");
+    ESP_LOGI(TAG, "Initializing I2S with BSP pins");
+    i2s_chan_config_t chan_cfg = I2S_CHANNEL_DEFAULT_CONFIG(CONFIG_BSP_I2S_NUM, I2S_ROLE_MASTER);
+    chan_cfg.auto_clear = true;
+    ESP_RETURN_ON_ERROR(i2s_new_channel(&chan_cfg, &tx_handle, &rx_handle), TAG, "create i2s channel failed");
 
-    *speaker = bsp_audio_codec_speaker_init();
-    ESP_RETURN_ON_FALSE(*speaker, ESP_FAIL, TAG, "speaker codec init failed");
+    const i2s_std_config_t i2s_cfg = {
+        .clk_cfg = I2S_STD_CLK_DEFAULT_CONFIG(CONFIG_EXAMPLE_SAMPLE_RATE),
+        .slot_cfg = I2S_STD_PHILIP_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_MONO),
+        .gpio_cfg = {
+            .mclk = BSP_I2S_MCLK,
+            .bclk = BSP_I2S_SCLK,
+            .ws = BSP_I2S_LCLK,
+            .dout = BSP_I2S_DOUT,
+            .din = BSP_I2S_DSIN,
+            .invert_flags = {
+                .mclk_inv = false,
+                .bclk_inv = false,
+                .ws_inv = false,
+            },
+        },
+    };
+
+    ESP_RETURN_ON_ERROR(i2s_channel_init_std_mode(tx_handle, &i2s_cfg), TAG, "init i2s tx failed");
+    ESP_RETURN_ON_ERROR(i2s_channel_init_std_mode(rx_handle, &i2s_cfg), TAG, "init i2s rx failed");
+
+    audio_codec_i2s_cfg_t codec_i2s_cfg = {
+        .port = CONFIG_BSP_I2S_NUM,
+        .tx_handle = tx_handle,
+        .rx_handle = rx_handle,
+    };
+    *data_if = audio_codec_new_i2s_data(&codec_i2s_cfg);
+    ESP_RETURN_ON_FALSE(*data_if, ESP_FAIL, TAG, "create i2s data interface failed");
+
+    return ESP_OK;
+}
+
+static esp_err_t speaker_codec_init(const audio_codec_data_if_t *data_if, esp_codec_dev_handle_t *speaker)
+{
+    ESP_LOGI(TAG, "Initializing ES8311 speaker codec");
+    ESP_RETURN_ON_ERROR(bsp_i2c_init(), TAG, "bsp i2c init failed");
+
+    const audio_codec_gpio_if_t *gpio_if = audio_codec_new_gpio();
+    ESP_RETURN_ON_FALSE(gpio_if, ESP_FAIL, TAG, "create gpio interface failed");
+
+    audio_codec_i2c_cfg_t i2c_cfg = {
+        .port = BSP_I2C_NUM,
+        .addr = ES8311_CODEC_DEFAULT_ADDR,
+        .bus_handle = bsp_i2c_get_handle(),
+    };
+    const audio_codec_ctrl_if_t *i2c_ctrl_if = audio_codec_new_i2c_ctrl(&i2c_cfg);
+    ESP_RETURN_ON_FALSE(i2c_ctrl_if, ESP_FAIL, TAG, "create i2c control interface failed");
+
+    esp_codec_dev_hw_gain_t gain = {
+        .pa_voltage = 5.0,
+        .codec_dac_voltage = 3.3,
+    };
+
+    es8311_codec_cfg_t es8311_cfg = {
+        .ctrl_if = i2c_ctrl_if,
+        .gpio_if = gpio_if,
+        .codec_mode = ESP_CODEC_DEV_WORK_MODE_DAC,
+        .pa_pin = BSP_POWER_AMP_IO,
+        .pa_reverted = false,
+        .master_mode = false,
+        .use_mclk = true,
+        .digital_mic = false,
+        .invert_mclk = false,
+        .invert_sclk = false,
+        .hw_gain = gain,
+    };
+    const audio_codec_if_t *es8311_dev = es8311_codec_new(&es8311_cfg);
+    ESP_RETURN_ON_FALSE(es8311_dev, ESP_FAIL, TAG, "create es8311 codec failed");
+
+    esp_codec_dev_cfg_t codec_dev_cfg = {
+        .dev_type = ESP_CODEC_DEV_TYPE_OUT,
+        .codec_if = es8311_dev,
+        .data_if = data_if,
+    };
+    *speaker = esp_codec_dev_new(&codec_dev_cfg);
+    ESP_RETURN_ON_FALSE(*speaker, ESP_FAIL, TAG, "create speaker codec device failed");
 
     esp_codec_dev_sample_info_t fs = sample_info();
     ESP_RETURN_ON_ERROR(codec_dev_to_esp_err(esp_codec_dev_open(*speaker, &fs), "open speaker codec"), TAG, "open failed");
@@ -62,8 +142,7 @@ static void fill_sine_frame(int16_t *samples, float *phase)
 
     for (size_t i = 0; i < AUDIO_FRAME_COUNT; i++) {
         int16_t sample = (int16_t)(sinf(*phase) * 12000.0f);
-        samples[i * 2] = sample;
-        samples[i * 2 + 1] = sample;
+        samples[i] = sample;
 
         *phase += step;
         if (*phase >= AUDIO_TWO_PI) {
@@ -93,8 +172,9 @@ static void speaker_task(void *args)
 void app_main(void)
 {
     esp_codec_dev_handle_t speaker = NULL;
+    const audio_codec_data_if_t *data_if = NULL;
 
-    if (speaker_codec_init(&speaker) != ESP_OK) {
+    if (i2s_driver_init(&data_if) != ESP_OK || speaker_codec_init(data_if, &speaker) != ESP_OK) {
         ESP_LOGE(TAG, "Audio setup failed; leaving task idle instead of restarting");
         while (true) {
             vTaskDelay(pdMS_TO_TICKS(5000));
