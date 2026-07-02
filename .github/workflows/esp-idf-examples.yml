@@ -3,20 +3,28 @@ name: ESP-IDF examples
 on:
   pull_request:
     paths:
-      - "examples/esp-idf/**"
+      - "examples/**"
+      - "firmware/**"
+      - "Firmware/**"
+      - "FirmWare/**"
+      - "config/**"
       - ".github/workflows/esp-idf-examples.yml"
       - ".github/scripts/discover_esp_idf_examples.py"
   push:
     branches:
       - main
     paths:
-      - "examples/esp-idf/**"
+      - "examples/**"
+      - "firmware/**"
+      - "Firmware/**"
+      - "FirmWare/**"
+      - "config/**"
       - ".github/workflows/esp-idf-examples.yml"
       - ".github/scripts/discover_esp_idf_examples.py"
   workflow_dispatch:
     inputs:
-      example:
-        description: "ESP-IDF example directory name, path, or all"
+      project:
+        description: "ESP-IDF example or firmware project directory name, path, or all"
         required: false
         default: "all"
 
@@ -45,7 +53,7 @@ jobs:
 
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             python .github/scripts/discover_esp_idf_examples.py \
-              --example "${{ inputs.example }}"
+              --example "${{ inputs.project }}"
           elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
             python .github/scripts/discover_esp_idf_examples.py \
               --base-ref "${{ github.event.pull_request.base.sha }}" \
@@ -82,10 +90,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        example: ${{ fromJson(needs.discover.outputs.matrix).example }}
-        idf_version:
-          - v5.5.4
+      matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
