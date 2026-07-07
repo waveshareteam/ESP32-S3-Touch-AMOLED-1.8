@@ -3,28 +3,24 @@ name: ESP-IDF examples
 on:
   pull_request:
     paths:
-      - "examples/**"
-      - "firmware/**"
-      - "Firmware/**"
-      - "FirmWare/**"
+      - "examples/esp-idf/**"
       - "config/**"
       - ".github/workflows/esp-idf-examples.yml"
       - ".github/scripts/discover_esp_idf_examples.py"
+      - ".github/scripts/package_esp_idf_firmware.py"
   push:
     branches:
       - main
     paths:
-      - "examples/**"
-      - "firmware/**"
-      - "Firmware/**"
-      - "FirmWare/**"
+      - "examples/esp-idf/**"
       - "config/**"
       - ".github/workflows/esp-idf-examples.yml"
       - ".github/scripts/discover_esp_idf_examples.py"
+      - ".github/scripts/package_esp_idf_firmware.py"
   workflow_dispatch:
     inputs:
       project:
-        description: "ESP-IDF example or firmware project directory name, path, or all"
+        description: "ESP-IDF example directory name, path, or all"
         required: false
         default: "all"
 
@@ -101,3 +97,20 @@ jobs:
           esp_idf_version: ${{ matrix.idf_version }}
           target: esp32s3
           path: ${{ matrix.example }}
+
+      - name: Package firmware artifact
+        id: package
+        shell: bash
+        run: |
+          python .github/scripts/package_esp_idf_firmware.py \
+            --project "${{ matrix.example }}" \
+            --idf-version "${{ matrix.idf_version }}" \
+            --target esp32s3 \
+            --output-dir release-artifacts
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.package.outputs.artifact_name }}
+          path: ${{ steps.package.outputs.archive }}
+          if-no-files-found: error

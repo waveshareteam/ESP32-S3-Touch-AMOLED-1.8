@@ -8,7 +8,7 @@
 
 ## 快速开始
 
-推荐使用 ESP-IDF v5.5.x，目标芯片为 `esp32s3`：
+推荐使用 ESP-IDF v5.5.x 或 v6.0.x，目标芯片为 `esp32s3`：
 
 ```bash
 cd examples/esp-idf/00_board_check
@@ -64,7 +64,7 @@ ESP-IDF 示例按照从简单到复杂的顺序组织：
 
 ## CI
 
-GitHub Actions 使用 ESP-IDF v5.5.4 为 `esp32s3` 构建选中的 ESP-IDF 示例。PR 中修改哪个 ESP-IDF 示例就构建哪个；修改 workflow 或 discovery 脚本时构建全部 ESP-IDF 示例。Arduino 示例目前不在该 ESP-IDF CI 中构建。
+GitHub Actions 使用 ESP-IDF v5.5.4 和 v6.0.2 为 `esp32s3` 构建选中的 ESP-IDF 示例。PR 中修改哪个 ESP-IDF 示例就构建哪个；修改 workflow、discovery 脚本、打包脚本或共享配置时构建全部 ESP-IDF 示例。成功的 CI 构建会上传源码构建出的可刷写固件压缩包；仓库内的工厂固件仅作为恢复/出厂镜像保留，不纳入 CI 构建。
 
 ## 支持
 

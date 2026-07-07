@@ -14,7 +14,7 @@ The board combines an ESP32-S3 module, a 1.8-inch 368 x 448 AMOLED touch display
 | [examples/esp-idf/](examples/esp-idf/) | ESP-IDF examples for ESP32-S3 |
 | [examples/Arduino-v3.3.5/](examples/Arduino-v3.3.5/) | Arduino examples for the original board package |
 | [examples/Arduino-v3.3.5-v2/](examples/Arduino-v3.3.5-v2/) | Arduino examples for the newer board package |
-| [Firmware/](Firmware/README.txt) | Prebuilt factory firmware images |
+| [Firmware/](Firmware/README.txt) | Prebuilt factory firmware images; see [docs/FIRMWARE.md](docs/FIRMWARE.md) for CI artifacts |
 | [docs/](docs/GETTING_STARTED.md) | Setup, example, and CI documentation |
 | [README_CN.md](README_CN.md) | Chinese overview and quick start |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution and example style guide |
@@ -24,7 +24,7 @@ The board combines an ESP32-S3 module, a 1.8-inch 368 x 448 AMOLED touch display
 
 ## Recommended ESP-IDF Flow
 
-Use ESP-IDF v5.5.x and the ESP32-S3 target:
+Use ESP-IDF v5.5.x or v6.0.x and the ESP32-S3 target:
 
 ```bash
 cd examples/esp-idf/00_board_check
@@ -70,7 +70,7 @@ See [examples/README.md](examples/README.md) and [docs/EXAMPLES_GUIDE.md](docs/E
 
 ## Continuous Integration
 
-GitHub Actions builds selected ESP-IDF examples for `esp32s3` using ESP-IDF v5.5.4. Pull requests build changed ESP-IDF examples; workflow or discovery-script changes build the full ESP-IDF example set. Manual runs can build a named example or all ESP-IDF examples.
+GitHub Actions builds selected ESP-IDF examples for `esp32s3` using ESP-IDF v5.5.4 and v6.0.2. Pull requests build changed ESP-IDF examples; workflow, discovery-script, packaging-script, or shared config changes build the full ESP-IDF example set. Successful CI builds upload source-built flashable firmware archives. Checked-in factory binaries remain documented recovery assets and are not rebuilt by CI.
 
 See [docs/CI.md](docs/CI.md) for workflow details.
 

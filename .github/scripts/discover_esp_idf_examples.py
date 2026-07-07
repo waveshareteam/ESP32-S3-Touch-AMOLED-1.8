@@ -20,7 +20,7 @@ GLOBAL_EXAMPLE_PATTERNS = (
     "config/*.defaults",
     "config/**/*.defaults",
 )
-DEFAULT_IDF_VERSIONS = ("v5.5.4", "v6.0.1")
+DEFAULT_IDF_VERSIONS = ("v5.5.4", "v6.0.2")
 
 
 def run_git(args: list[str]) -> list[str]:
@@ -37,6 +37,12 @@ def is_project(path: Path) -> bool:
     return (path / "CMakeLists.txt").is_file() and (path / "main").is_dir()
 
 
+def root_has_project(root: Path) -> bool:
+    if is_project(root):
+        return True
+    return any(path.is_dir() and is_project(path) for path in root.iterdir())
+
+
 def discover_roots() -> list[Path]:
     roots: list[Path] = []
     examples = Path("examples")
@@ -46,7 +52,7 @@ def discover_roots() -> list[Path]:
                 roots.append(path)
 
     for firmware_root in (Path("firmware"), Path("Firmware"), Path("FirmWare")):
-        if firmware_root.is_dir():
+        if firmware_root.is_dir() and root_has_project(firmware_root):
             roots.append(firmware_root)
 
     return sorted(dict.fromkeys(roots), key=lambda item: item.as_posix().lower())
