@@ -9,31 +9,31 @@ This repository has two different firmware artifact types.
 Factory binaries are not source projects:
 
 - They are not rebuilt by GitHub Actions.
-- They are not uploaded again as CI artifacts.
+- They are not repackaged as CI artifacts.
 - They should not be treated as generated output from this repository.
 
 Keep factory-binary documentation focused on the board revision, intended use, and flashing or recovery notes.
 
 ## Source-Built CI Artifacts
 
-ESP-IDF examples under `examples/esp-idf/` are built by GitHub Actions. After a successful build, the workflow packages the build output into a flashable archive by reading `flasher_args.json` from the ESP-IDF build directory.
+ESP-IDF examples under `examples/esp-idf/` and first-party Arduino sketches under `examples/Arduino-v3.3.5*/examples/` are built by GitHub Actions. After a successful build, the workflow packages the build output into a flashable archive with `releases/package_firmware.py`.
 
 Each CI firmware archive contains:
 
 - `manifest.json`
-- `flasher_args.json`
 - `flash.sh`
 - `flash.bat`
-- `bin/` with the bootloader, partition table, app, and any other binaries referenced by `flasher_args.json`
+- `flasher_args.json` for ESP-IDF builds
+- `bin/` with the bootloader, partition table, app, merged image, or other binaries referenced by the manifest
 
 Download these archives from the workflow run artifacts. They are validation outputs from CI, not source files, and should stay out of the repository.
 
-## Ignored Generated Outputs
+## Local Release Checks
 
-The repository ignores generated or downloaded firmware packages in:
+For local release packaging, build the target first and run `releases/package_firmware.py` from the repository root. The default output directory is `releases/dist/`; CI uses `release-artifacts/`.
+
+Generated or downloaded firmware packages are ignored in:
 
 - `release-artifacts/`
 - `releases/dist/`
 - `releases/downloads/`
-
-Use those locations for temporary local packaging checks or downloaded CI artifacts.

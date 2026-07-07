@@ -64,7 +64,7 @@ ESP-IDF 示例按照从简单到复杂的顺序组织：
 
 ## CI
 
-GitHub Actions 使用 ESP-IDF v5.5.4 和 v6.0.2 为 `esp32s3` 构建选中的 ESP-IDF 示例。PR 中修改哪个 ESP-IDF 示例就构建哪个；修改 workflow、discovery 脚本、打包脚本或共享配置时构建全部 ESP-IDF 示例。成功的 CI 构建会上传源码构建出的可刷写固件压缩包；仓库内的工厂固件仅作为恢复/出厂镜像保留，不纳入 CI 构建。
+GitHub Actions 使用 `Build Examples` workflow 构建 first-party ESP-IDF 和 Arduino 示例：ESP-IDF 覆盖 v5.5.4 与 v6.0.2，Arduino 覆盖 Arduino-ESP32 core 3.3.10。修改 workflow、发现脚本、release 打包脚本、共享配置或示例时，会运行选中的矩阵。PR 和 push 默认使用 `all` 目标；手动运行时可按名称或路径选择单个示例。成功的 CI 构建会上传源码构建出的可刷写固件压缩包；仓库内的工厂固件仅作为恢复/出厂镜像保留，不纳入 CI 构建。
 
 ## 支持
 

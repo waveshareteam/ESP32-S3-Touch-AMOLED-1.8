@@ -1,64 +1,55 @@
 # Continuous Integration
 
-This repository uses GitHub Actions to build selected ESP-IDF examples and upload flashable source-built firmware artifacts.
+This repository uses the `Build Examples` GitHub Actions workflow to discover examples dynamically, build them, and upload flashable source-built firmware artifacts.
 
-## ESP-IDF Example Builds
+## Discovery
 
-The `ESP-IDF examples` workflow runs on:
+The workflow uses `scripts/discover_examples.py` for both framework surfaces:
 
-- Pull requests that change files under `examples/esp-idf/`.
-- Pull requests that change shared config files under `config/`.
-- Pull requests that change the workflow, discovery script, or firmware packaging script.
-- Pushes to `main` that touch the same paths.
-- Manual runs from the GitHub Actions page.
+- ESP-IDF projects are discovered from `examples/esp-idf/*/CMakeLists.txt` with a `main/` directory.
+- Arduino sketches are discovered from first-party sketch directories under `examples/Arduino-v3.3.5*/examples/`.
+- Arduino sketches inside bundled libraries are intentionally excluded from product CI.
 
-The workflow discovers buildable ESP-IDF examples by looking for directories under `examples/esp-idf/` that contain both:
+`workflow_dispatch` accepts `all`, an example directory name, or a repo-relative example path. Maintainers can run the full matrix or a single example.
 
-- `CMakeLists.txt`
-- `main/`
+Pull request and push runs use the default `all` target and build the full discovered matrix for each triggered surface. Manual runs can narrow the matrix by passing an example name or repo-relative path to `target`.
 
-For pull requests and pushes, only changed ESP-IDF examples are built. If the workflow, discovery script, packaging script, or shared config changes, the workflow builds all ESP-IDF examples because those files affect the entire CI surface.
+## Matrix
 
-Manual runs accept one input:
+Current CI matrix:
 
-| Input | Value |
-| --- | --- |
-| `project` | Defaults to `all`; accepts `all`, a directory name such as `14_lvgl_demo_v9`, or a full path such as `examples/esp-idf/14_lvgl_demo_v9` |
+- ESP-IDF `v5.5.4` and `v6.0.2`, target `esp32s3`.
+- Arduino-ESP32 core `3.3.10`, FQBN `esp32:esp32:esp32s3`, using bundled libraries from the matching `examples/Arduino-v3.3.5*/libraries` directory.
 
-The workflow currently builds with:
-
-- ESP-IDF Docker image `espressif/idf:v5.5.4`
-- ESP-IDF Docker image `espressif/idf:v6.0.2`
-- Target: `esp32s3`
-
-The selected versions were resolved from Espressif stable releases on 2026-07-07. Do not replace them with beta, release-candidate, preview, or nightly tags unless the repository intentionally opts into that coverage.
+The selected framework versions were resolved from upstream stable releases on 2026-07-07. Do not replace them with beta, release-candidate, preview, or nightly tags unless the repository intentionally opts into that coverage.
 
 ## Firmware Artifacts
 
-After each successful ESP-IDF build, CI packages the build output by reading the example build directory's `flasher_args.json`. Each uploaded archive contains:
+Each successful ESP-IDF and Arduino matrix build uploads a flashable firmware artifact. CI packages build outputs through `releases/package_firmware.py`.
 
-- `manifest.json` with the project path, ESP-IDF version, target, flash arguments, and binary list.
-- `flasher_args.json` from the ESP-IDF build output.
+Each generated archive contains:
+
+- `manifest.json` with framework, framework version, target, project path, git SHA, flash arguments, and binary offsets.
 - `flash.sh` and `flash.bat` helper scripts.
-- The bootloader, partition table, app, and other binaries referenced by `flasher_args.json` under `bin/`.
+- `flasher_args.json` for ESP-IDF builds.
+- `bin/` with the firmware binaries referenced by the manifest.
+
+Download the artifact zip from the workflow run, extract it, then run `flash.sh` or `flash.bat` with the board serial port.
 
 Generated archives are workflow artifacts only. Do not commit generated files from `release-artifacts/`, `releases/dist/`, or `releases/downloads/`.
 
-Checked-in files under `Firmware/` are factory or recovery binaries. They are documented assets, not source-build outputs, and they do not trigger this ESP-IDF build workflow.
-
-## Arduino Scope
-
-Arduino sketches remain in the versioned board-package directories under `examples/Arduino-v3.3.5*/` and use bundled libraries. They are intentionally not built by the ESP-IDF workflow, and examples inside bundled libraries are excluded from product CI by default.
-
-Add a dedicated Arduino workflow only after the first-party Arduino root, FQBN, board options, and sketch inclusion policy are normalized for this repository.
+Checked-in files under `Firmware/` are factory or recovery binaries. They are documented assets, not source-build outputs, and they do not trigger source-build packaging.
 
 ## Local Script Checks
 
-The discovery helper can be run without building firmware:
+Discovery can be checked without building firmware:
 
 ```bash
-python .github/scripts/discover_esp_idf_examples.py --example 00_board_check
-python .github/scripts/discover_esp_idf_examples.py --example all
+python scripts/discover_examples.py --surface esp-idf --selector 00_board_check
+python scripts/discover_examples.py --surface esp-idf --selector all
+python scripts/discover_examples.py --surface arduino --selector all
 ```
 
-Both commands print the matrix JSON that the workflow passes to the ESP-IDF CI action. The packaging helper expects an existing ESP-IDF build output and is normally exercised inside CI after `esp-idf-ci-action` finishes.
+The packaging helper expects an existing ESP-IDF or Arduino build output and is normally exercised inside CI after the framework build finishes.
+
+If an example requires hardware, credentials, or an upstream component that is not yet compatible with a selected framework version, document the exclusion here before excluding it from CI.

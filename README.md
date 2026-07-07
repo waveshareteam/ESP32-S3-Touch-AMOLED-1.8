@@ -16,6 +16,7 @@ The board combines an ESP32-S3 module, a 1.8-inch 368 x 448 AMOLED touch display
 | [examples/Arduino-v3.3.5-v2/](examples/Arduino-v3.3.5-v2/) | Arduino examples for the newer board package |
 | [Firmware/](Firmware/README.txt) | Prebuilt factory firmware images; see [docs/FIRMWARE.md](docs/FIRMWARE.md) for CI artifacts |
 | [docs/](docs/GETTING_STARTED.md) | Setup, example, and CI documentation |
+| [releases/](releases/README.md) | Firmware packaging helper for CI and maintainer release checks |
 | [README_CN.md](README_CN.md) | Chinese overview and quick start |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution and example style guide |
 | [SUPPORT.md](SUPPORT.md) | Support channels and issue-reporting checklist |
@@ -70,7 +71,7 @@ See [examples/README.md](examples/README.md) and [docs/EXAMPLES_GUIDE.md](docs/E
 
 ## Continuous Integration
 
-GitHub Actions builds selected ESP-IDF examples for `esp32s3` using ESP-IDF v5.5.4 and v6.0.2. Pull requests build changed ESP-IDF examples; workflow, discovery-script, packaging-script, or shared config changes build the full ESP-IDF example set. Successful CI builds upload source-built flashable firmware archives. Checked-in factory binaries remain documented recovery assets and are not rebuilt by CI.
+GitHub Actions uses the `Build Examples` workflow to build first-party ESP-IDF examples for `esp32s3` with ESP-IDF v5.5.4 and v6.0.2, and first-party Arduino sketches with Arduino-ESP32 core 3.3.10. Workflow, discovery-script, release-packaging, shared config, or example changes run the selected matrix. Pull request and push runs use the default `all` target; manual runs can select one example by name or path. Successful builds upload source-built flashable firmware archives. Checked-in factory binaries remain documented recovery assets and are not rebuilt by CI.
 
 See [docs/CI.md](docs/CI.md) for workflow details.
 

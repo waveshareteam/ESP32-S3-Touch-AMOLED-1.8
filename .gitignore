@@ -9,3 +9,5 @@ __pycache__/
 release-artifacts/
 releases/dist/
 releases/downloads/
+**/build/
+**/managed_components/
