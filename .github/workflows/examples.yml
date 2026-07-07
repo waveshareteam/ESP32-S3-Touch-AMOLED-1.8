@@ -13,8 +13,8 @@ on:
       - "releases/**"
       - "config/**"
       - "examples/esp-idf/**"
-      - "examples/Arduino-v3.3.5/**"
-      - "examples/Arduino-v3.3.5-v2/**"
+      - "examples/arduino/**"
+      - "examples/arduino-v2/**"
   pull_request:
     paths:
       - ".github/workflows/examples.yml"
@@ -22,8 +22,8 @@ on:
       - "releases/**"
       - "config/**"
       - "examples/esp-idf/**"
-      - "examples/Arduino-v3.3.5/**"
-      - "examples/Arduino-v3.3.5-v2/**"
+      - "examples/arduino/**"
+      - "examples/arduino-v2/**"
   workflow_dispatch:
     inputs:
       target:

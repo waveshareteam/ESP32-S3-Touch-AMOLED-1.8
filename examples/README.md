@@ -50,14 +50,14 @@ The previous local-component SD, LVGL-with-RAM, and direct I2S codec demos were 
 
 ## Arduino
 
-Arduino examples are kept in the versioned directories provided by the board package:
+Arduino examples are split into two maintained first-party sets. Both sets use the latest stable Arduino-ESP32 core selected by CI and their matching bundled libraries:
 
 | Directory | Purpose |
 | --- | --- |
-| [Arduino-v3.3.5](Arduino-v3.3.5/) | Original Arduino example set |
-| [Arduino-v3.3.5-v2](Arduino-v3.3.5-v2/) | Updated Arduino example set |
+| [arduino](arduino/) | Original Arduino example set |
+| [arduino-v2](arduino-v2/) | V2 Arduino example set |
 
-Use the Arduino-ESP32 core version named by the directory unless an individual sketch README says otherwise.
+CI builds both directories and excludes examples inside bundled libraries.
 
 ## Adding Examples
 

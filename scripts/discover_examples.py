@@ -13,7 +13,7 @@ from pathlib import Path
 
 
 ESP_IDF_ROOT = Path("examples/esp-idf")
-ARDUINO_ROOTS = (Path("examples/Arduino-v3.3.5"), Path("examples/Arduino-v3.3.5-v2"))
+ARDUINO_ROOTS = (Path("examples/arduino"), Path("examples/arduino-v2"))
 GLOBAL_PATTERNS = (
     ".github/workflows/examples.yml",
     "scripts/discover_examples.py",

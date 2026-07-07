@@ -16,14 +16,14 @@ Keep factory-binary documentation focused on the board revision, intended use, a
 
 ## Source-Built CI Artifacts
 
-ESP-IDF examples under `examples/esp-idf/` and first-party Arduino sketches under `examples/Arduino-v3.3.5*/examples/` are built by GitHub Actions. After a successful build, the workflow packages the build output into a flashable archive with `releases/package_firmware.py`.
+ESP-IDF examples under `examples/esp-idf/` and first-party Arduino sketches under `examples/arduino/examples/` and `examples/arduino-v2/examples/` are built by GitHub Actions. After a successful build, the workflow packages the build output into a flashable archive with `releases/package_firmware.py`.
 
 Each CI firmware archive contains:
 
 - `manifest.json`
 - `flash.sh`
 - `flash.bat`
-- `flasher_args.json` for ESP-IDF builds
+- `flash_args.txt` with the esptool command arguments
 - `bin/` with the bootloader, partition table, app, merged image, or other binaries referenced by the manifest
 
 Download these archives from the workflow run artifacts. They are validation outputs from CI, not source files, and should stay out of the repository.

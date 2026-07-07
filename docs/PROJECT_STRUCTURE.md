@@ -14,7 +14,8 @@ The repository keeps hardware assets, examples, and CI support separate so users
 | `examples/esp-idf/01_project_template` | Minimal managed-BSP project template |
 | `examples/esp-idf/0*_*, examples/esp-idf/1*_*` | Board, OS, peripheral, display, and LVGL examples |
 | `examples/esp-idf/90_*` | Board-specific hardware diagnostics and managed sensor checks |
-| `examples/Arduino-v3.3.5*/` | Arduino sketches and bundled libraries |
+| `examples/arduino/` | Original Arduino sketches and bundled libraries |
+| `examples/arduino-v2/` | V2 Arduino sketches and bundled libraries |
 | `config/` | Shared ESP-IDF configuration overlays and CI-facing defaults |
 | `Firmware/` | Factory firmware binaries and notes; excluded from source-build CI |
 | `releases/` | Firmware packaging scripts and release notes |
