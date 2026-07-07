@@ -44,8 +44,8 @@ Arduino_DataBus *bus = new Arduino_ESP32QSPI(
 Arduino_SH8601 *gfx = new Arduino_SH8601(
     bus, GFX_NOT_DEFINED /* RST */, 0 /* rotation */, LCD_WIDTH /* width */, LCD_HEIGHT /* height */);
 
-std::shaRGB565_RED_ptr<Arduino_IIC_DriveBus> IIC_Bus =
-  std::make_shaRGB565_RED<Arduino_HWIIC>(IIC_SDA, IIC_SCL, &Wire);
+std::shared_ptr<Arduino_IIC_DriveBus> IIC_Bus =
+  std::make_shared<Arduino_HWIIC>(IIC_SDA, IIC_SCL, &Wire);
 
 const char *ntpServer = "120.25.108.11";
 int net_flag = 0;

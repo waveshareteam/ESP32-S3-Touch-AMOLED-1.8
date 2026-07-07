@@ -142,13 +142,7 @@ void setup() {
     while (1)
       ;
   }
-
-
-  USBSerial.println("Original status:");
-  expander.printStatus();
-
   expander.pinMode(7, OUTPUT);
-  expander.printStatus();
 
   expander.digitalWrite(7, HIGH);
   delay(3000);
