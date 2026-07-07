@@ -98,7 +98,7 @@ jobs:
             --surface arduino \
             --selector "${{ github.event.inputs.target || 'all' }}" \
             --arduino-core 3.3.10 \
-            --fqbn esp32:esp32:esp32s3 \
+            --fqbn esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB \
             --github-output "$GITHUB_OUTPUT"
 
   build-arduino:
