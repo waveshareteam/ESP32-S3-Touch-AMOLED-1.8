@@ -12,7 +12,7 @@ python3 releases/package_firmware.py \
   --framework esp-idf \
   --project examples/esp-idf/00_board_check \
   --build-dir build/00_board_check-v6.0.2 \
-  --name ESP32-S3-Touch-AMOLED-1.8-00_board_check-v6.0.2 \
+  --name ESP32-S3-Touch-AMOLED-1.8-00_board_check-esp-idf-v6.0.2-esp32s3 \
   --framework-version v6.0.2 \
   --target esp32s3
 ```
@@ -35,14 +35,16 @@ python3 releases/package_firmware.py \
   --framework arduino \
   --project examples/arduino/examples/01_HelloWorld \
   --build-dir build/arduino-01_HelloWorld-3.3.10 \
-  --name ESP32-S3-Touch-AMOLED-1.8-arduino-01_HelloWorld-arduino-3.3.10 \
+  --name ESP32-S3-Touch-AMOLED-1.8-arduino-01_HelloWorld-arduino-3.3.10-esp32s3 \
   --framework-version 3.3.10 \
   --target esp32s3
 ```
 
 For V2 sketches, use `examples/arduino-v2/libraries` and a project under `examples/arduino-v2/examples/`.
 
-Each archive includes `manifest.json`, `flash.sh`, `flash.bat`, `flash_args.txt`, a package `README.md`, and the firmware binaries under `bin/`.
+Each archive includes `manifest.json`, `flash.sh`, `flash.bat`, `flash_args.txt`, a package `README.md`, and the firmware binaries under `bin/`. The manifest records `project_path`, `timestamp_utc`, framework and target metadata, git SHA, baud rate, flash command, and binary offsets.
+
+CI passes the workflow commit SHA to the packager, so generated zip names end with the short commit identifier. The outer GitHub artifact name stays stable for filtering and downloads.
 
 ## Download CI Artifacts
 
@@ -66,4 +68,4 @@ Use `--artifact <name>` to download one firmware package, or `--pattern "firmwar
 
 Generated archives, downloaded workflow artifacts, and build directories are ignored by git. Do not commit generated zip files, extracted firmware folders, or local build outputs.
 
-Factory binaries under `Firmware/` are separate recovery assets. They are documented but not repackaged as CI build outputs.
+Factory binaries under `Firmware/` are separate recovery assets. They are documented but not repackaged as CI build outputs. Their corresponding source and build instructions are not included in this repository yet and may be added in a later update.

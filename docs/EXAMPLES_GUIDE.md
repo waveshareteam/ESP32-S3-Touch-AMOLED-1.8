@@ -38,7 +38,7 @@ dependencies:
   waveshare/esp32_s3_touch_amoled_1_8: "^2.0.3"
 ```
 
-The ESP Component Registry lists `2.0.3` as the latest `waveshare/esp32_s3_touch_amoled_1_8` release for `esp32s3` as of 2026-07-07. Checked-in component copies should only be used when an example intentionally demonstrates a local patch or a compatibility fallback. The RTC and IMU diagnostics use `waveshare/pcf85063a` `^2.0.0` and `waveshare/qmi8658` `^2.0.0`, which remain the current managed sensor releases.
+The ESP Component Registry lists `2.0.3` as the latest `waveshare/esp32_s3_touch_amoled_1_8` release for `esp32s3` as of 2026-07-15. Checked-in component copies should only be used when an example intentionally demonstrates a local patch or a compatibility fallback. The RTC and IMU diagnostics use `waveshare/pcf85063a` `^2.0.0` and `waveshare/qmi8658` `^2.0.0`, which remain the current managed sensor releases.
 
 ## CI Coverage
 

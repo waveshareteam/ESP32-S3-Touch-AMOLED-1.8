@@ -14,12 +14,15 @@ from pathlib import Path
 
 ESP_IDF_ROOT = Path("examples/esp-idf")
 ARDUINO_ROOTS = (Path("examples/arduino"), Path("examples/arduino-v2"))
-GLOBAL_PATTERNS = (
+COMMON_GLOBAL_PATTERNS = (
     ".github/workflows/examples.yml",
     "scripts/discover_examples.py",
-    "releases/**",
-    "config/**",
+    "releases/package_firmware.py",
 )
+SURFACE_GLOBAL_PATTERNS = {
+    "esp-idf": ("config/**",),
+    "arduino": (),
+}
 
 
 def sanitize_name(path: Path) -> str:
@@ -84,26 +87,36 @@ def all_examples(surface: str) -> list[dict[str, str]]:
 
 
 def matches_selector(example: dict[str, str], selector: str) -> bool:
-    selector = selector.strip().strip("/")
+    selector = selector.replace("\\", "/").strip().strip("/")
     if not selector or selector == "all":
         return True
     path = example["path"].strip("/")
     if selector == path or selector == example["name"] or selector == Path(path).name:
         return True
+    if path.startswith(selector + "/"):
+        return True
+    if "/" not in selector and selector in Path(path).parts:
+        return True
     return path.endswith("/" + selector)
 
 
 def changed_paths(base_ref: str | None, head_ref: str) -> list[str]:
-    if base_ref:
-        return run_git(["diff", "--name-only", f"{base_ref}...{head_ref}"])
-    return run_git(["diff-tree", "--no-commit-id", "--name-only", "-r", head_ref])
+    try:
+        if base_ref:
+            if set(base_ref) == {"0"}:
+                return []
+            return run_git(["diff", "--name-only", f"{base_ref}...{head_ref}"])
+        return run_git(["diff-tree", "--no-commit-id", "--name-only", "-r", head_ref])
+    except subprocess.CalledProcessError:
+        return []
 
 
 def affected_by_paths(example: dict[str, str], paths: list[str], surface: str) -> bool:
     example_path = example["path"].strip("/")
+    global_patterns = COMMON_GLOBAL_PATTERNS + SURFACE_GLOBAL_PATTERNS[surface]
     for changed in paths:
         changed = changed.strip().strip("/")
-        if any(fnmatch.fnmatch(changed, pattern) for pattern in GLOBAL_PATTERNS):
+        if any(fnmatch.fnmatch(changed, pattern) for pattern in global_patterns):
             return True
         if changed == example_path or changed.startswith(example_path + "/"):
             return True
@@ -116,7 +129,7 @@ def affected_by_paths(example: dict[str, str], paths: list[str], surface: str) -
 
 def select_examples(surface: str, selector: str, base_ref: str | None, head_ref: str, fallback_all: bool) -> list[dict[str, str]]:
     examples = all_examples(surface)
-    selector = selector.strip().strip("/")
+    selector = selector.replace("\\", "/").strip().strip("/")
     if selector:
         selected = [example for example in examples if matches_selector(example, selector)]
     else:

@@ -71,7 +71,7 @@ See [examples/README.md](examples/README.md) and [docs/EXAMPLES_GUIDE.md](docs/E
 
 ## Continuous Integration
 
-GitHub Actions uses the `Build Examples` workflow to build first-party ESP-IDF examples for `esp32s3` with ESP-IDF v5.5.4 and v6.0.2, plus both `examples/arduino` and `examples/arduino-v2` sketch sets with Arduino-ESP32 core 3.3.10. Workflow, discovery-script, release-packaging, shared config, or example changes run the selected matrix. Pull request and push runs use the default `all` target; manual runs can select one example by name or path. Successful builds upload source-built flashable firmware archives. Checked-in factory binaries remain documented recovery assets and are not rebuilt by CI.
+GitHub Actions uses the `Build Examples` workflow to build first-party ESP-IDF examples for `esp32s3` with ESP-IDF v5.5.4 and v6.0.2, plus both `examples/arduino` and `examples/arduino-v2` sketch sets with Arduino-ESP32 core 3.3.10. Pull request and branch push runs build affected first-party examples; matching bundled-library changes rebuild their Arduino sketch set, while workflow, discovery, and release-packaging changes rebuild both surfaces. Tag pushes and manual `all` runs build the full matrix, and manual runs can select one example by name or path. Successful builds upload source-built flashable firmware archives. Checked-in factory binaries remain documented recovery assets and are not rebuilt by CI.
 
 See [docs/CI.md](docs/CI.md) for workflow details.
 

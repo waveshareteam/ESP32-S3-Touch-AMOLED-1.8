@@ -4,7 +4,7 @@ This repository has two different firmware artifact types.
 
 ## Factory Binaries
 
-`Firmware/` contains prebuilt factory or recovery images supplied with the product. These binaries are checked in intentionally so users can recover or restore a board without rebuilding private factory firmware.
+`Firmware/` contains prebuilt factory or recovery images supplied with the product. These binaries are checked in intentionally so users can recover or restore a board without requiring a source build. Their corresponding source and build instructions are not included in this repository yet and may be added in a later update.
 
 Factory binaries are not source projects:
 
@@ -20,13 +20,13 @@ ESP-IDF examples under `examples/esp-idf/` and first-party Arduino sketches unde
 
 Each CI firmware archive contains:
 
-- `manifest.json`
+- `manifest.json` with schema version, framework, target, `project_path`, git SHA, `timestamp_utc`, baud rate, flash command, and binary offsets
 - `flash.sh`
 - `flash.bat`
 - `flash_args.txt` with the esptool command arguments
 - `bin/` with the bootloader, partition table, app, merged image, or other binaries referenced by the manifest
 
-Download these archives from the workflow run artifacts. They are validation outputs from CI, not source files, and should stay out of the repository.
+Download these archives from the workflow run artifacts. CI zip names include the framework, example, framework version, target, and short commit identifier. They are validation outputs from CI, not source files, and should stay out of the repository.
 
 ## Local Release Checks
 

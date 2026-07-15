@@ -25,6 +25,10 @@ def slugify(value: str) -> str:
     return value or "firmware"
 
 
+def short_commit(value: str) -> str:
+    return slugify(value)[:7] if value.strip() else ""
+
+
 def parse_offset(value: str) -> int:
     return int(value, 0)
 
@@ -210,6 +214,9 @@ def package(args: argparse.Namespace) -> Path:
     build_dir = Path(args.build_dir)
     output_dir = Path(args.output_dir)
     artifact_name = slugify(args.name or f"{project.name}-{args.framework_version or args.framework}")
+    commit = short_commit(args.git_sha)
+    if commit and not artifact_name.endswith(f"-{commit}"):
+        artifact_name = f"{artifact_name}-{commit}"
     package_dir = output_dir / artifact_name
     firmware_dir = package_dir / "bin"
 
@@ -233,13 +240,14 @@ def package(args: argparse.Namespace) -> Path:
 
     command = build_esptool_prefix(chip, before, after) + write_flash_args + command_pairs
     manifest = {
+        "schema_version": 1,
         "name": artifact_name,
         "framework": args.framework,
         "framework_version": args.framework_version,
         "target": chip,
-        "project": safe_project_path(project, repo),
+        "project_path": safe_project_path(project, repo),
         "git_sha": args.git_sha,
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "timestamp_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "baud": DEFAULT_BAUD,
         "files": files,
         "flash_command": " ".join("<PORT>" if item == "$PORT" else item for item in command),

@@ -10,7 +10,7 @@ on:
     paths:
       - ".github/workflows/examples.yml"
       - "scripts/discover_examples.py"
-      - "releases/**"
+      - "releases/package_firmware.py"
       - "config/**"
       - "examples/esp-idf/**"
       - "examples/arduino/**"
@@ -19,7 +19,7 @@ on:
     paths:
       - ".github/workflows/examples.yml"
       - "scripts/discover_examples.py"
-      - "releases/**"
+      - "releases/package_firmware.py"
       - "config/**"
       - "examples/esp-idf/**"
       - "examples/arduino/**"
@@ -34,6 +34,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   discover-esp-idf:
     runs-on: ubuntu-latest
@@ -41,12 +45,21 @@ jobs:
       matrix: ${{ steps.discover.outputs.matrix }}
       count: ${{ steps.discover.outputs.count }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - id: discover
+        env:
+          SELECTOR: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.target || '' }}
+          BASE_REF: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+          HEAD_REF: ${{ github.sha }}
         run: |
           python3 scripts/discover_examples.py \
             --surface esp-idf \
-            --selector "${{ github.event.inputs.target || 'all' }}" \
+            --selector "$SELECTOR" \
+            --base-ref "$BASE_REF" \
+            --head-ref "$HEAD_REF" \
+            --fallback-all \
             --idf-versions v5.5.4,v6.0.2 \
             --github-output "$GITHUB_OUTPUT"
 
@@ -59,7 +72,7 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJSON(needs.discover-esp-idf.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build ${{ matrix.path }} with ESP-IDF ${{ matrix.idf }}
         shell: bash
         run: |
@@ -73,13 +86,13 @@ jobs:
             --framework esp-idf \
             --project "${{ matrix.path }}" \
             --build-dir "build/${{ matrix.name }}-${{ matrix.idf }}" \
-            --name "ESP32-S3-Touch-AMOLED-1.8-${{ matrix.name }}-${{ matrix.idf }}" \
+            --name "ESP32-S3-Touch-AMOLED-1.8-${{ matrix.name }}-esp-idf-${{ matrix.idf }}-esp32s3" \
             --framework-version "${{ matrix.idf }}" \
             --target esp32s3 \
             --git-sha "${{ github.sha }}" \
             --output-dir release-artifacts
       - name: Upload firmware artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: firmware-esp-idf-${{ matrix.name }}-${{ matrix.idf }}
           path: release-artifacts/*.zip
@@ -91,12 +104,21 @@ jobs:
       matrix: ${{ steps.discover.outputs.matrix }}
       count: ${{ steps.discover.outputs.count }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - id: discover
+        env:
+          SELECTOR: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.target || '' }}
+          BASE_REF: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+          HEAD_REF: ${{ github.sha }}
         run: |
           python3 scripts/discover_examples.py \
             --surface arduino \
-            --selector "${{ github.event.inputs.target || 'all' }}" \
+            --selector "$SELECTOR" \
+            --base-ref "$BASE_REF" \
+            --head-ref "$HEAD_REF" \
+            --fallback-all \
             --arduino-core 3.3.10 \
             --fqbn esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB \
             --github-output "$GITHUB_OUTPUT"
@@ -109,7 +131,7 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJSON(needs.discover-arduino.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: arduino/setup-arduino-cli@v2
       - name: Install ESP32 Arduino core
         run: |
@@ -131,13 +153,13 @@ jobs:
             --framework arduino \
             --project "${{ matrix.path }}" \
             --build-dir "build/${{ matrix.name }}-${{ matrix.core }}" \
-            --name "ESP32-S3-Touch-AMOLED-1.8-${{ matrix.name }}-arduino-${{ matrix.core }}" \
+            --name "ESP32-S3-Touch-AMOLED-1.8-${{ matrix.name }}-arduino-${{ matrix.core }}-esp32s3" \
             --framework-version "${{ matrix.core }}" \
             --target esp32s3 \
             --git-sha "${{ github.sha }}" \
             --output-dir release-artifacts
       - name: Upload firmware artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: firmware-arduino-${{ matrix.name }}-${{ matrix.core }}
           path: release-artifacts/*.zip
