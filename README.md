@@ -1,92 +1,201 @@
-# ESP32-S3-Touch-AMOLED-1.8
+<div align="center">
+  <h1>ESP32-S3-Touch-AMOLED-1.8</h1>
+  <p><strong>ESP32-S3 1.8-inch 368 x 448 QSPI AMOLED touch development board</strong></p>
+  <p>
+    <a href="https://github.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/actions/workflows/examples.yml"><img alt="Build Examples" src="https://github.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/actions/workflows/examples.yml/badge.svg"></a>
+    <a href="https://components.espressif.com/components/waveshare/esp32_s3_touch_amoled_1_8"><img alt="Component Registry" src="https://components.espressif.com/components/waveshare/esp32_s3_touch_amoled_1_8/badge.svg"></a>
+    <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/waveshareteam/ESP32-S3-Touch-AMOLED-1.8"></a>
+  </p>
+  <p>
+    <a href="https://www.waveshare.com/wiki/ESP32-S3-Touch-AMOLED-1.8">🌐 Product Wiki</a> ·
+    <a href="https://github.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/releases">🏷️ GitHub Releases</a> ·
+    <a href="https://github.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/actions/workflows/examples.yml">📦 CI Firmware Artifacts</a> ·
+    <a href="examples/esp-idf/">🧩 ESP-IDF Examples</a> ·
+    <a href="examples/arduino/">🔧 Arduino Examples</a> ·
+    <a href="docs/">📚 Documentation</a> ·
+    <a href="README_CN.md">中文</a>
+  </p>
+</div>
 
-[中文版本](README_CN.md)
+---
 
-Engineering examples and firmware assets for the Waveshare ESP32-S3-Touch-AMOLED-1.8 board.
+## ✨ Overview
 
-The board combines an ESP32-S3 module, a 1.8-inch 368 x 448 AMOLED touch display, SD card support, an ES8311 audio codec, onboard microphone input, an RTC, a PMU, and an IMU. The ESP-IDF examples prefer the managed `waveshare/esp32_s3_touch_amoled_1_8` BSP component so new projects can start from the same online component used by the current board support package.
+This repository provides first-party ESP-IDF projects, two Arduino example
+sets, source-built firmware packages, factory recovery images, and development
+documentation for the Waveshare ESP32-S3-Touch-AMOLED-1.8.
 
-## Repository Layout
+The board combines an ESP32-S3 with a high-resolution AMOLED display,
+capacitive touch, power management, RTC, motion sensing, microSD storage, and
+audio interfaces. The repository supports both display and touch revisions:
+the original SH8601/FT3168 board and the newer CO5300/CST816 board.
 
-| Path | Contents |
+## 🖥️ Hardware Overview
+
+| Feature | Device / interface |
 | --- | --- |
-| [examples/](examples/README.md) | Arduino sketches and ESP-IDF projects |
-| [examples/esp-idf/](examples/esp-idf/) | ESP-IDF examples for ESP32-S3 |
-| [examples/arduino/](examples/arduino/) | Arduino examples for the original board package |
-| [examples/arduino-v2/](examples/arduino-v2/) | Arduino examples for the newer board package |
-| [Firmware/](Firmware/README.txt) | Prebuilt factory firmware images; see [docs/FIRMWARE.md](docs/FIRMWARE.md) for CI artifacts |
-| [docs/](docs/GETTING_STARTED.md) | Setup, example, and CI documentation |
-| [releases/](releases/README.md) | Firmware packaging helper for CI and maintainer release checks |
-| [README_CN.md](README_CN.md) | Chinese overview and quick start |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution and example style guide |
-| [SUPPORT.md](SUPPORT.md) | Support channels and issue-reporting checklist |
-| [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | Community participation expectations |
-| [THIRD_PARTY.md](THIRD_PARTY.md) | Third-party component and bundled-library notes |
+| MCU | ESP32-S3 |
+| Display | 1.8-inch 368 x 448 QSPI AMOLED |
+| Original display / touch | SH8601 with FT3168 capacitive touch |
+| V2 display / touch | CO5300 with CST816 capacitive touch |
+| Power management | AXP2101 PMU |
+| Real-time clock | PCF85063A RTC |
+| Motion sensor | QMI8658 six-axis IMU |
+| Audio | ES8311 codec, onboard microphone input, and speaker amplifier |
+| Storage | microSD over SDMMC |
+| Board support | Managed component: `waveshare/esp32_s3_touch_amoled_1_8` |
 
-## Recommended ESP-IDF Flow
+> [!IMPORTANT]
+> A board-level schematic is not included in this repository yet. CI validates
+> source compatibility and firmware packaging, but it does not replace
+> hardware validation of pins, PSRAM, USB, display, touch, audio, or sensors.
 
-Use ESP-IDF v5.5.x or v6.0.x and the ESP32-S3 target:
+## 📦 Firmware Artifacts
+
+Each successful CI build is packaged as a flashable firmware archive and
+uploaded to the
+[Build Examples workflow](https://github.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/actions/workflows/examples.yml).
+
+Versioned firmware bundles are available from
+[GitHub Releases](https://github.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/releases)
+when a release is published. Release contents may vary by version; use the CI
+artifacts for per-example builds from recent commits.
+
+The easiest way to download and extract artifacts from a completed run is:
 
 ```bash
-cd examples/esp-idf/00_board_check
-idf.py set-target esp32s3
-idf.py build
-idf.py -p PORT flash monitor
+python3 releases/download_artifacts.py --run-id <run-id> --clean
 ```
 
-`00_board_check` verifies chip, flash, PSRAM, BSP capabilities, display size, I2C pins, SD pins, and audio support through the managed BSP component. For a richer first UI test, use `00_bsp_quickstart`, which starts LVGL, shows an interactive touch dashboard, controls AMOLED brightness, and probes the onboard SD card through the BSP API.
+After extraction, open the matching folder under
+`releases/downloads/run-<run-id>/` and flash the board with:
 
-## ESP-IDF Example Highlights
+```bash
+./flash.sh /dev/ttyACM0
+```
 
-The ESP-IDF example set follows the ESP32-P4 platform learning order where it applies to this board, with ESP32-S3-specific changes and lower_snake_case directory names.
+On Windows:
 
-| Directory | Purpose | Notes |
-| --- | --- | --- |
-| [00_board_check](examples/esp-idf/00_board_check/) | Board and BSP capability check | Serial-first smoke test |
-| [00_bsp_quickstart](examples/esp-idf/00_bsp_quickstart/) | Interactive BSP/LVGL quick start | UI smoke test |
-| [01_project_template](examples/esp-idf/01_project_template/) | Minimal managed-BSP project template | Practical new-project starting point |
-| [02_hello_world](examples/esp-idf/02_hello_world/) | ESP-IDF hello world | Chip info and restart flow |
-| [03_nvs_counter](examples/esp-idf/03_nvs_counter/) | Persistent NVS counter | Demonstrates flash-backed state |
-| [04_freertos_tasks](examples/esp-idf/04_freertos_tasks/) | FreeRTOS tasks and queue | Small producer/consumer demo |
-| [05_gpio_io](examples/esp-idf/05_gpio_io/) | GPIO input/output loopback | User-selected safe GPIOs |
-| [06_gpio_interrupt](examples/esp-idf/06_gpio_interrupt/) | GPIO interrupt handling | User-selected safe input GPIO |
-| [08_i2c_tools](examples/esp-idf/08_i2c_tools/) | I2C bus scanner | Defaults to the board I2C bus |
-| [09_sdmmc](examples/esp-idf/09_sdmmc/) | SDMMC/FAT file operations | Uses BSP SD card mounting |
-| [10_wifi_station](examples/esp-idf/10_wifi_station/) | Wi-Fi station connection | Configure credentials in menuconfig |
-| [12_i2s_codec](examples/esp-idf/12_i2s_codec/) | ES8311 speaker playback | Uses BSP audio APIs |
-| [13_display_colorbar](examples/esp-idf/13_display_colorbar/) | AMOLED color-bar rendering | Uses BSP display panel handle |
-| [14_lvgl_demo_v9](examples/esp-idf/14_lvgl_demo_v9/) | LVGL v9 widgets demo | Display, touch, LVGL, brightness |
+```bat
+flash.bat COMx
+```
 
-Additional hardware diagnostics are kept in the `90_` range so they do not compete with the managed BSP learning path. RTC and IMU diagnostics now use Waveshare online components; the PMU example remains a local low-level diagnostic:
+Each package contains `manifest.json`, `flash_args.txt`, platform-specific
+flash helpers, and the required binaries under `bin/`. Install esptool with
+`python -m pip install esptool` when needed.
 
-| Directory | Purpose | Notes |
-| --- | --- | --- |
-| [90_axp2101_pmu](examples/esp-idf/90_axp2101_pmu/) | AXP2101 PMU bring-up | Local-component diagnostic |
-| [91_pcf85063_rtc](examples/esp-idf/91_pcf85063_rtc/) | PCF85063A RTC bring-up | Uses `waveshare/pcf85063a` |
-| [92_qmi8658_imu](examples/esp-idf/92_qmi8658_imu/) | QMI8658 IMU readings | Uses `waveshare/qmi8658` |
+Factory and recovery images under [Firmware](Firmware/) are checked-in product
+assets, not CI build outputs. See
+[Firmware Artifacts](docs/FIRMWARE.md) and [Release Tools](releases/README.md)
+for the source-built and factory firmware boundaries.
 
-The older `04_SD_MMC`, `05_LVGL_WITH_RAM`, and direct `06_I2SCodec` examples were removed because their supported workflows are covered by `09_sdmmc`, `00_bsp_quickstart`, `12_i2s_codec`, and `14_lvgl_demo_v9` through the online BSP component.
+## 🧪 Examples
 
-See [examples/README.md](examples/README.md) and [docs/EXAMPLES_GUIDE.md](docs/EXAMPLES_GUIDE.md) for the recommended learning path.
+### ESP-IDF
 
-## Continuous Integration
+| Example | Focus |
+| --- | --- |
+| [00_board_check](examples/esp-idf/00_board_check/) | Serial board, memory, BSP, and capability check |
+| [00_bsp_quickstart](examples/esp-idf/00_bsp_quickstart/) | Interactive display, touch, brightness, and SD quick start |
+| [01_project_template](examples/esp-idf/01_project_template/) | Minimal managed-BSP project template |
+| [02_hello_world](examples/esp-idf/02_hello_world/) | ESP-IDF chip information and restart flow |
+| [03_nvs_counter](examples/esp-idf/03_nvs_counter/) | Persistent NVS boot counter |
+| [04_freertos_tasks](examples/esp-idf/04_freertos_tasks/) | FreeRTOS tasks, queue, and producer/consumer flow |
+| [05_gpio_io](examples/esp-idf/05_gpio_io/) | Configurable GPIO loopback |
+| [06_gpio_interrupt](examples/esp-idf/06_gpio_interrupt/) | GPIO interrupt handling |
+| [08_i2c_tools](examples/esp-idf/08_i2c_tools/) | Onboard I2C bus scanner |
+| [09_sdmmc](examples/esp-idf/09_sdmmc/) | SDMMC and FAT file operations |
+| [10_wifi_station](examples/esp-idf/10_wifi_station/) | Wi-Fi station connection |
+| [12_i2s_codec](examples/esp-idf/12_i2s_codec/) | ES8311 speaker playback |
+| [13_display_colorbar](examples/esp-idf/13_display_colorbar/) | AMOLED RGB565 color-bar rendering |
+| [14_lvgl_demo_v9](examples/esp-idf/14_lvgl_demo_v9/) | LVGL 9 display and touch demo |
+| [90_axp2101_pmu](examples/esp-idf/90_axp2101_pmu/) | Low-level AXP2101 diagnostic |
+| [91_pcf85063_rtc](examples/esp-idf/91_pcf85063_rtc/) | PCF85063A RTC diagnostic |
+| [92_qmi8658_imu](examples/esp-idf/92_qmi8658_imu/) | QMI8658 acceleration and gyro readings |
 
-GitHub Actions uses the `Build Examples` workflow to build first-party ESP-IDF examples for `esp32s3` with ESP-IDF v5.5.4 and v6.0.2, plus both `examples/arduino` and `examples/arduino-v2` sketch sets with Arduino-ESP32 core 3.3.10. Pull request and branch push runs build affected first-party examples; matching bundled-library changes rebuild their Arduino sketch set, while workflow, discovery, and release-packaging changes rebuild both surfaces. Tag pushes and manual `all` runs build the full matrix, and manual runs can select one example by name or path. Successful builds upload source-built flashable firmware archives. Checked-in factory binaries remain documented recovery assets and are not rebuilt by CI.
+Start with `00_board_check` for a serial-first check, then use
+`00_bsp_quickstart` for the first interactive display and touch test.
 
-See [docs/CI.md](docs/CI.md) for workflow details.
+### Arduino
 
-## Support
+Arduino examples are split into two first-party sets with matching bundled
+libraries:
 
-- Product wiki: https://www.waveshare.com/wiki/ESP32-S3-Touch-AMOLED-1.8
-- Component Registry: https://components.espressif.com/components/waveshare/esp32_s3_touch_amoled_1_8
-- Issues: https://github.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/issues
+| Set | Display / touch | First-party sketches |
+| --- | --- | ---: |
+| [Original](examples/arduino/examples/) | SH8601 / FT3168 | 16 |
+| [V2](examples/arduino-v2/examples/) | CO5300 / CST816 | 10 |
 
-For hardware support, include the board revision, the example path, ESP-IDF version, serial log, and any external devices connected to the board. See [SUPPORT.md](SUPPORT.md) for the full issue checklist.
+The sets cover display bring-up, drawing, RTC, LVGL, IMU, SD, and ES8311 audio.
+The original set additionally includes Wi-Fi analysis, clock, AXP2101
+telemetry, animation, and a SquareLine-style LVGL project.
 
-## Contributing
+Bundled libraries live under
+[`examples/arduino/libraries`](examples/arduino/libraries/) and
+[`examples/arduino-v2/libraries`](examples/arduino-v2/libraries/). Their own
+upstream library examples are intentionally excluded from the product CI
+matrix.
 
-Pull requests are welcome for example fixes, documentation updates, and board-specific diagnostics. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before adding examples or changing CI behavior.
+See [Examples](examples/README.md) and the
+[Examples Guide](docs/EXAMPLES_GUIDE.md) for the recommended learning path.
 
-## License
+## 🛠️ Supported Toolchains
 
-Unless noted otherwise in a subdirectory, source files in this repository are provided under the Apache License 2.0. Third-party libraries keep their own licenses and notices; see [THIRD_PARTY.md](THIRD_PARTY.md).
+| Surface | Version | Firmware builds |
+| --- | --- | ---: |
+| ESP-IDF | `v5.5.4` | 17 |
+| ESP-IDF | `v6.0.2` | 17 |
+| Arduino-ESP32 original | `3.3.10` | 16 |
+| Arduino-ESP32 V2 | `3.3.10` | 10 |
+
+The
+[Build Examples workflow](https://github.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/actions/workflows/examples.yml)
+runs two discovery jobs and up to 60 firmware build jobs. Pull request and
+branch push runs build affected first-party examples; workflow, discovery, and
+release-packaging changes rebuild both framework surfaces. Tag pushes and
+manual `all` runs build the full matrix.
+
+Every successful build uploads a source-built firmware artifact. See
+[Continuous Integration](docs/CI.md) for change detection, dispatch inputs,
+board options, artifact behavior, and hardware validation boundaries.
+
+## 🗂️ Repository Layout
+
+| Path | Purpose |
+| --- | --- |
+| [`examples/esp-idf/`](examples/esp-idf/) | First-party ESP-IDF projects |
+| [`examples/arduino/`](examples/arduino/) | Original Arduino sketches and bundled libraries |
+| [`examples/arduino-v2/`](examples/arduino-v2/) | V2 Arduino sketches and bundled libraries |
+| [`Firmware/`](Firmware/) | Factory flashing and recovery binaries |
+| [`releases/`](releases/) | Firmware packaging and artifact download tools |
+| [`config/`](config/) | Shared ESP-IDF configuration notes and overlays |
+| [`docs/`](docs/) | Setup, examples, CI, structure, and firmware documentation |
+
+## 📚 Documentation
+
+- [Getting Started](docs/GETTING_STARTED.md)
+- [Examples Guide](docs/EXAMPLES_GUIDE.md)
+- [Repository Structure](docs/PROJECT_STRUCTURE.md)
+- [Continuous Integration](docs/CI.md)
+- [Firmware Artifacts](docs/FIRMWARE.md)
+- [Release Tools](releases/README.md)
+- [Chinese README](README_CN.md)
+
+## 🤝 Support and Contributions
+
+Contributions and reproducible issue reports are welcome. Include the board
+revision, example path, framework version, reproduction steps, expected
+behavior, actual behavior, and relevant serial or build logs.
+
+- [Contributing Guide](CONTRIBUTING.md)
+- [Support](SUPPORT.md)
+- [Security Policy](SECURITY.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Third-party Notices](THIRD_PARTY.md)
+- [Open an Issue](https://github.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/issues/new/choose)
+
+## 📄 License
+
+Unless noted otherwise in a subdirectory, this repository is licensed under
+the Apache License 2.0. Third-party libraries keep their own licenses and
+notices. See [LICENSE](LICENSE) and [Third-party Notices](THIRD_PARTY.md).
