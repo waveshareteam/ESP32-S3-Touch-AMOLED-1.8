@@ -20,8 +20,8 @@ Manual runs can build the full matrix or narrow it by passing an example name, a
 
 Current CI matrix:
 
-- ESP-IDF `v5.5.4` and `v6.0.2`, target `esp32s3`.
-- Arduino-ESP32 core `3.3.10`, FQBN `esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB`, using bundled libraries from the matching `examples/arduino/libraries` or `examples/arduino-v2/libraries` directory.
+- ESP-IDF `v5.5.5` and `v6.0.2`, target `esp32s3`.
+- Arduino-ESP32 core `3.3.11`, FQBN `esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB`, using bundled libraries from the matching `examples/arduino/libraries` or `examples/arduino-v2/libraries` directory.
 
 The selected framework versions were resolved from upstream stable releases on 2026-07-15. Do not replace them with beta, release-candidate, preview, or nightly tags unless the repository intentionally opts into that coverage.
 

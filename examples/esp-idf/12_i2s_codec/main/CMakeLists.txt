@@ -1,4 +1,4 @@
-idf_component_register(SRCS "i2s_es8311_example.c" INCLUDE_DIRS "." REQUIRES esp32_s3_touch_amoled_1_8)
+idf_component_register(SRCS "i2s_es8311_example.c" INCLUDE_DIRS "." REQUIRES esp32_s3_touch_amoled_1_8 esp_driver_i2c)
 idf_build_get_property(build_components BUILD_COMPONENTS)
 if("lvgl__lvgl" IN_LIST build_components)
     idf_component_get_property(LVGL_LIB lvgl__lvgl COMPONENT_LIB)

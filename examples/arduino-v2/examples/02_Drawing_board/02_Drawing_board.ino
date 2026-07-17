@@ -30,6 +30,7 @@ void Arduino_IIC_Touch_Interrupt(void) {
 
 void setup() {
   USBSerial.begin(115200);
+  USBSerial.setTxTimeoutMs(0);  // Prevent debug output from blocking the sketch.
   Wire.begin(IIC_SDA, IIC_SCL);
   if (!expander.begin(0x20)) {  // Replace with actual I2C address if different
     Serial.println("Failed to find XCA9554 chip");
@@ -73,12 +74,36 @@ void setup() {
 }
 
 void loop() {
-  int32_t touchX = CST816->IIC_Read_Device_Value(CST816->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-  int32_t touchY = CST816->IIC_Read_Device_Value(CST816->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
+  static uint32_t lastTouchRead = 0;
+  static int32_t lastTouchX = -1;
+  static int32_t lastTouchY = -1;
+  const uint32_t now = millis();
+  if (now - lastTouchRead < 10) {
+    delay(1);
+    return;
+  }
+  lastTouchRead = now;
 
-  if (CST816->IIC_Interrupt_Flag == true) {
-    CST816->IIC_Interrupt_Flag = false;
-    USBSerial.printf("Touch X:%d Y:%d\n", touchX, touchY);
-    if (touchX > 20 && touchY > 20) { gfx->fillCircle(touchX, touchY, 5, RGB565_BLUE); }
+  const int32_t touchPoints =
+    CST816->IIC_Read_Device_Value(CST816->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
+  if (touchPoints > 0) {
+    const int32_t touchX =
+      CST816->IIC_Read_Device_Value(CST816->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
+    const int32_t touchY =
+      CST816->IIC_Read_Device_Value(CST816->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
+    if (USBSerial) {
+      USBSerial.printf("Touch X:%d Y:%d\n", touchX, touchY);
+    }
+    if (touchX > 20 && touchY > 20 && (touchX != lastTouchX || touchY != lastTouchY)) {
+      if (lastTouchX >= 0 && lastTouchY >= 0) {
+        gfx->drawLine(lastTouchX, lastTouchY, touchX, touchY, RGB565_BLUE);
+      }
+      gfx->fillCircle(touchX, touchY, 5, RGB565_BLUE);
+      lastTouchX = touchX;
+      lastTouchY = touchY;
+    }
+  } else {
+    lastTouchX = -1;
+    lastTouchY = -1;
   }
 }

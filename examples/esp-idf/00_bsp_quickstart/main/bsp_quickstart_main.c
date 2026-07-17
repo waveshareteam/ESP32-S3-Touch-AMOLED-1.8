@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -13,6 +14,8 @@
 #include "lvgl.h"
 
 static const char *TAG = "bsp_quickstart";
+
+#define SD_MARKER_PATH BSP_SD_MOUNT_POINT "/bsp.txt"
 
 static lv_obj_t *s_heap_label;
 static lv_obj_t *s_sd_label;
@@ -78,15 +81,17 @@ static void example_probe_sdcard(void)
         return;
     }
 
-    FILE *file = fopen("/sdcard/bsp_quickstart.txt", "w");
+    FILE *file = fopen(SD_MARKER_PATH, "w");
     if (file == NULL) {
+        const int error_code = errno;
         example_set_sd_status("SD card: mounted, write failed");
-        ESP_LOGW(TAG, "SD card mounted, but marker file could not be written");
+        ESP_LOGW(TAG, "Could not write %s (errno=%d: %s)",
+                 SD_MARKER_PATH, error_code, strerror(error_code));
     } else {
         fprintf(file, "ESP32-S3-Touch-AMOLED-1.8 BSP quick-start OK\n");
         fclose(file);
         example_set_sd_status("SD card: mounted, marker written");
-        ESP_LOGI(TAG, "Wrote /sdcard/bsp_quickstart.txt");
+        ESP_LOGI(TAG, "Wrote %s", SD_MARKER_PATH);
     }
 
     ret = bsp_sdcard_unmount();

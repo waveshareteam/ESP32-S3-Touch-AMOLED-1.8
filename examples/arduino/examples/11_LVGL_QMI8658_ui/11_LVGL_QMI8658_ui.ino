@@ -19,6 +19,7 @@ SensorQMI8658 qmi;
 
 IMUdata acc;
 IMUdata gyr;
+uint32_t lastImuUpdate = 0;
 
 lv_obj_t *label;                  // Global label object
 lv_obj_t *chart;                  // Global chart object
@@ -48,8 +49,9 @@ void Arduino_IIC_Touch_Interrupt(void) {
 #if LV_USE_LOG != 0
 /* Serial debugging */
 void my_print(const char *buf) {
-  USBSerial.printf(buf);
-  USBSerial.flush();
+  if (USBSerial) {
+    USBSerial.print(buf);
+  }
 }
 #endif
 
@@ -93,18 +95,21 @@ void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data) {
     data->point.x = touchX;
     data->point.y = touchY;
 
-    USBSerial.print("Data x ");
-    USBSerial.print(touchX);
+    if (USBSerial) {
+      USBSerial.print("Data x ");
+      USBSerial.print(touchX);
 
-    USBSerial.print("Data y ");
-    USBSerial.println(touchY);
+      USBSerial.print("Data y ");
+      USBSerial.println(touchY);
+    }
   } else {
     data->state = LV_INDEV_STATE_REL;
   }
 }
 
 void setup() {
-  USBSerial.begin(115200); /* prepare for possible serial debug */
+  USBSerial.begin(115200);
+  USBSerial.setTxTimeoutMs(0);  // Prevent debug output from blocking the sketch.
 
   // pinMode(LCD_EN, OUTPUT);
   // digitalWrite(LCD_EN, HIGH);
@@ -205,15 +210,19 @@ void loop() {
   lv_timer_handler(); /* let the GUI do its work */
   delay(5);
 
-  if (qmi.getDataReady()) {
+  const uint32_t now = millis();
+  if (now - lastImuUpdate >= 50 && qmi.getDataReady()) {
+    lastImuUpdate = now;
     if (qmi.getAccelerometer(acc.x, acc.y, acc.z)) {
-      USBSerial.print("{ACCEL: ");
-      USBSerial.print(acc.x);
-      USBSerial.print(",");
-      USBSerial.print(acc.y);
-      USBSerial.print(",");
-      USBSerial.print(acc.z);
-      USBSerial.println("}");
+      if (USBSerial) {
+        USBSerial.print("{ACCEL: ");
+        USBSerial.print(acc.x);
+        USBSerial.print(",");
+        USBSerial.print(acc.y);
+        USBSerial.print(",");
+        USBSerial.print(acc.z);
+        USBSerial.println("}");
+      }
 
       // Update chart with new accelerometer data
       lv_chart_set_next_value(chart, acc_series_x, acc.x);
@@ -222,14 +231,15 @@ void loop() {
     }
 
     if (qmi.getGyroscope(gyr.x, gyr.y, gyr.z)) {
-      USBSerial.print("{GYRO: ");
-      USBSerial.print(gyr.x);
-      USBSerial.print(",");
-      USBSerial.print(gyr.y);
-      USBSerial.print(",");
-      USBSerial.print(gyr.z);
-      USBSerial.println("}");
+      if (USBSerial) {
+        USBSerial.print("{GYRO: ");
+        USBSerial.print(gyr.x);
+        USBSerial.print(",");
+        USBSerial.print(gyr.y);
+        USBSerial.print(",");
+        USBSerial.print(gyr.z);
+        USBSerial.println("}");
+      }
     }
   }
-  delay(20);  // Increase the frequency of data polling
 }

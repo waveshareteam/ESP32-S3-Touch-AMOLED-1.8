@@ -27,7 +27,7 @@ body:
     id: framework_version
     attributes:
       label: ESP-IDF or Arduino version
-      placeholder: ESP-IDF v5.5.4 or v6.0.2
+      placeholder: ESP-IDF v5.5.5 or v6.0.2
     validations:
       required: true
   - type: dropdown

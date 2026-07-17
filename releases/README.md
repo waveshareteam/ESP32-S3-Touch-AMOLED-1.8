@@ -28,15 +28,15 @@ arduino-cli compile \
   --fqbn esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB \
   --libraries examples/arduino/libraries \
   --export-binaries \
-  --output-dir build/arduino-01_HelloWorld-3.3.10 \
+  --output-dir build/arduino-01_HelloWorld-3.3.11 \
   examples/arduino/examples/01_HelloWorld
 
 python3 releases/package_firmware.py \
   --framework arduino \
   --project examples/arduino/examples/01_HelloWorld \
-  --build-dir build/arduino-01_HelloWorld-3.3.10 \
-  --name ESP32-S3-Touch-AMOLED-1.8-arduino-01_HelloWorld-arduino-3.3.10-esp32s3 \
-  --framework-version 3.3.10 \
+  --build-dir build/arduino-01_HelloWorld-3.3.11 \
+  --name ESP32-S3-Touch-AMOLED-1.8-arduino-01_HelloWorld-arduino-3.3.11-esp32s3 \
+  --framework-version 3.3.11 \
   --target esp32s3
 ```
 
@@ -60,7 +60,7 @@ If `--run-id` is omitted, the script finds the latest successful `examples.yml` 
 python3 releases/download_artifacts.py --clean
 ```
 
-The extracted firmware is written to `releases/downloads/run-<run-id>/`. Each artifact gets its own folder, for example `firmware-esp-idf-00_board_check-v6.0.2/` or `firmware-arduino-arduino-v2-01_HelloWorld-3.3.10/`, with `flash.sh`, `flash.bat`, `manifest.json`, `flash_args.txt`, and `bin/` ready for flashing.
+The extracted firmware is written to `releases/downloads/run-<run-id>/`. Each artifact gets its own folder, for example `firmware-esp-idf-00_board_check-v6.0.2/` or `firmware-arduino-arduino-v2-01_HelloWorld-3.3.11/`, with `flash.sh`, `flash.bat`, `manifest.json`, `flash_args.txt`, and `bin/` ready for flashing.
 
 Use `--artifact <name>` to download one firmware package, or `--pattern "firmware-arduino-*"` to filter by glob pattern. The script uses `GH_TOKEN`, `GITHUB_TOKEN`, or `gh auth token` for GitHub artifact access. When GitHub CLI is installed, artifact downloads use `gh run download` so `gh auth login` can be reused directly.
 

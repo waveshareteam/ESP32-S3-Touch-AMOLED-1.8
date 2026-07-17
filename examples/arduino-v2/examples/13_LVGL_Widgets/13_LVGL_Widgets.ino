@@ -14,6 +14,7 @@ SensorQMI8658 qmi;
 IMUdata acc;
 float angleX = 1;
 float angleY = 0;
+uint32_t lastImuUpdate = 0;
 
 bool rotation = false;
 
@@ -28,7 +29,7 @@ uint32_t screenWidth;
 uint32_t screenHeight;
 
 static lv_disp_draw_buf_t draw_buf;
-// static lv_color_t buf[screenWidth * screenHeight / 10];
+static lv_color_t buf[LCD_WIDTH * LCD_HEIGHT / 10];
 
 Arduino_DataBus *bus = new Arduino_ESP32QSPI(
   LCD_CS /* CS */, LCD_SCLK /* SCK */, LCD_SDIO0 /* SDIO0 */, LCD_SDIO1 /* SDIO1 */,
@@ -52,8 +53,9 @@ void Arduino_IIC_Touch_Interrupt(void) {
 #if LV_USE_LOG != 0
 /* Serial debugging */
 void my_print(const char *buf) {
-  Serial.printf(buf);
-  Serial.flush();
+  if (USBSerial) {
+    USBSerial.print(buf);
+  }
 }
 #endif
 
@@ -97,18 +99,21 @@ void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data) {
     data->point.x = touchX;
     data->point.y = touchY;
 
-    USBSerial.print("Data x ");
-    USBSerial.print(touchX);
+    if (USBSerial) {
+      USBSerial.print("Data x ");
+      USBSerial.print(touchX);
 
-    USBSerial.print("Data y ");
-    USBSerial.println(touchY);
+      USBSerial.print("Data y ");
+      USBSerial.println(touchY);
+    }
   } else {
     data->state = LV_INDEV_STATE_REL;
   }
 }
 
 void setup() {
-  USBSerial.begin(115200); /* prepare for possible serial debug */
+  USBSerial.begin(115200);
+  USBSerial.setTxTimeoutMs(0);  // Prevent debug output from blocking the sketch.
 
   Wire.begin(IIC_SDA, IIC_SCL);
   if (!expander.begin(0x20)) {  // Replace with actual I2C address if different
@@ -155,10 +160,6 @@ void setup() {
 
   lv_init();
 
-  lv_color_t *buf1 = (lv_color_t *)heap_caps_malloc(screenWidth * screenHeight / 4 * sizeof(lv_color_t), MALLOC_CAP_DMA);
-
-  lv_color_t *buf2 = (lv_color_t *)heap_caps_malloc(screenWidth * screenHeight / 4 * sizeof(lv_color_t), MALLOC_CAP_DMA);
-
   String LVGL_Arduino = "Hello Arduino! ";
   LVGL_Arduino += String('V') + lv_version_major() + "." + lv_version_minor() + "." + lv_version_patch();
 
@@ -175,7 +176,7 @@ void setup() {
                                  CST816->Arduino_IIC_Touch::Device_Mode::TOUCH_DEVICE_INTERRUPT_PERIODIC);
 
 
-  lv_disp_draw_buf_init(&draw_buf, buf1, buf2, screenWidth * screenHeight / 4);
+  lv_disp_draw_buf_init(&draw_buf, buf, NULL, LCD_WIDTH * LCD_HEIGHT / 10);
 
   /*Initialize the display*/
   static lv_disp_drv_t disp_drv;
@@ -220,7 +221,9 @@ void setup() {
 }
 
 void loop() {
-  if (qmi.getDataReady()) {
+  const uint32_t now = millis();
+  if (now - lastImuUpdate >= 100 && qmi.getDataReady()) {
+    lastImuUpdate = now;
     if (qmi.getAccelerometer(acc.x, acc.y, acc.z)) {
       angleX = acc.x;
       angleY = acc.y;

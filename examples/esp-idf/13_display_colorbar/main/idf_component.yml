@@ -2,6 +2,6 @@ version: "1.0.0"
 
 dependencies:
   idf: ">=5.5"
-  waveshare/esp32_s3_touch_amoled_1_8:
-    version: "^2.0.3"
+  espressif/esp_lcd_co5300:
+    version: "^2.1.0"
     public: true

@@ -10,6 +10,7 @@ This example uses the managed `waveshare/qmi8658` component instead of the older
 - Opens the onboard I2C bus on SDA 15 and SCL 14.
 - Probes QMI8658 address `0x6B`, then `0x6A` as a fallback.
 - Reads and logs the `WHO_AM_I` register.
+- Performs the datasheet soft-reset sequence before configuring the sensor.
 - Configures accelerometer range `4G` at `250 Hz`.
 - Configures gyroscope range `256 dps` at `250 Hz`.
 - Logs accelerometer, gyroscope, temperature, and timestamp data every 200 ms when data is ready.
@@ -20,7 +21,7 @@ The dependency is declared in [main/idf_component.yml](main/idf_component.yml):
 
 ```yaml
 dependencies:
-  idf: ">=5.5,<6.0"
+  idf: ">=5.5"
   waveshare/qmi8658:
     version: "^2.0.0"
     public: true
@@ -40,4 +41,5 @@ Replace `PORT` with the board serial port.
 
 - Use `08_i2c_tools` first if QMI8658 is not detected.
 - The example reports acceleration in `m/s^2` and angular rate in `dps`.
+- Recheck stationary readings on both board variants after changing the reset or range configuration; acceleration should be close to one gravity on the vertical axis and gyroscope values should remain near zero.
 - For new application structure, start from `01_project_template` and add only the sensor components you need.

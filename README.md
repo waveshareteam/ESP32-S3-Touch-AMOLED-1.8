@@ -143,10 +143,10 @@ See [Examples](examples/README.md) and the
 
 | Surface | Version | Firmware builds |
 | --- | --- | ---: |
-| ESP-IDF | `v5.5.4` | 17 |
+| ESP-IDF | `v5.5.5` | 17 |
 | ESP-IDF | `v6.0.2` | 17 |
-| Arduino-ESP32 original | `3.3.10` | 16 |
-| Arduino-ESP32 V2 | `3.3.10` | 10 |
+| Arduino-ESP32 original | `3.3.11` | 16 |
+| Arduino-ESP32 V2 | `3.3.11` | 10 |
 
 The
 [Build Examples workflow](https://github.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/actions/workflows/examples.yml)

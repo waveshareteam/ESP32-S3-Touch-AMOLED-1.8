@@ -27,3 +27,4 @@ The AMOLED display shows the LVGL widgets demo and responds to touch input. The 
 
 - This example needs PSRAM and a larger application partition; keep the provided `sdkconfig.defaults` and `partitions.csv`.
 - Run `13_display_colorbar` first if the display does not light up.
+- On ESP-IDF 5.5, the example suppresses the expected I2C NACK log while the BSP probes the alternate touch-controller address, then restores the previous log level.

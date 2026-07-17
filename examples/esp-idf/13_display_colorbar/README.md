@@ -1,28 +1,34 @@
 # 13_display_colorbar
 
-Display color-bar demo adapted from the ESP32-P4 platform example.
-
-ESP32-P4 uses a MIPI-DSI hardware pattern. This ESP32-S3 AMOLED port uses the BSP display panel handle and draws RGB565 bars with `esp_lcd_panel_draw_bitmap()`.
+Minimal CO5300 panel test for ESP32-S3-Touch-AMOLED-1.8 and V2 boards.
 
 ## Hardware
 
 - ESP32-S3-Touch-AMOLED-1.8 board
 - USB data cable
 
-## Build and Flash
+## Build and Flash Directly
 
 ```bash
 idf.py set-target esp32s3
 idf.py build
-idf.py -p PORT flash monitor
+idf.py -p PORT flash
 ```
 
 Replace `PORT` with the serial port for the board.
 
+The serial monitor is optional:
+
+```bash
+idf.py -p PORT monitor
+```
+
 ## Expected Result
 
-The AMOLED display shows static RGB565 color bars. The serial monitor reports display initialization status.
+The AMOLED displays eight vertical RGB565 color bars immediately after reset.
 
 ## Notes
 
-Use this example before LVGL when you need to isolate panel bring-up from UI, touch, and LVGL tasks.
+- This board connects the CO5300 through QSPI, not MIPI-DSI. Therefore, `esp_lcd_dpi_panel_set_pattern()` is not available.
+- The example directly initializes the managed `esp_lcd_co5300` driver and draws with `esp_lcd_panel_draw_bitmap()`; it does not initialize LVGL or a touch driver.
+- A single I2C address probe detects the V2 board and applies its 16-pixel panel X gap.

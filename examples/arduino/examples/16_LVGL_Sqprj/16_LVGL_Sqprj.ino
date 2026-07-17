@@ -33,9 +33,12 @@ uint32_t screenWidth;
 uint32_t screenHeight;
 
 static lv_disp_draw_buf_t draw_buf;
-// static lv_color_t buf[screenWidth * screenHeight / 10];
+static lv_color_t buf[LCD_WIDTH * LCD_HEIGHT / 10];
 
 int i = 0, j = 0, b = 255, brightness_flag = 0;
+uint32_t last_time_update = 0;
+uint32_t last_arc_update = 0;
+uint32_t lastImuUpdate = 0;
 
 Arduino_DataBus *bus = new Arduino_ESP32QSPI(
   LCD_CS /* CS */, LCD_SCLK /* SCK */, LCD_SDIO0 /* SDIO0 */, LCD_SDIO1 /* SDIO1 */,
@@ -63,8 +66,9 @@ void Arduino_IIC_Touch_Interrupt(void) {
 #if LV_USE_LOG != 0
 /* Serial debugging */
 void my_print(const char *buf) {
-  Serial.printf(buf);
-  Serial.flush();
+  if (USBSerial) {
+    USBSerial.print(buf);
+  }
 }
 #endif
 
@@ -108,11 +112,13 @@ void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data) {
     data->point.x = touchX;
     data->point.y = touchY;
 
-    USBSerial.print("Data x ");
-    USBSerial.print(touchX);
+    if (USBSerial) {
+      USBSerial.print("Data x ");
+      USBSerial.print(touchX);
 
-    USBSerial.print("Data y ");
-    USBSerial.println(touchY);
+      USBSerial.print("Data y ");
+      USBSerial.println(touchY);
+    }
 
     if (touchY <= 90 && touchY >= 20) { brightness_flag = 1; }
 
@@ -122,41 +128,28 @@ void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data) {
 }
 
 void wifi_init() {
+  WiFi.mode(WIFI_STA);
   WiFi.begin(SSID, PWD);
-
-  int connect_count = 0;
-  while (WiFi.status() != WL_CONNECTED) {
-    vTaskDelay(500);
-    USBSerial.print(".");
-    connect_count++;
-  }
-
-  USBSerial.println("Wifi connect");
-  configTime((const long)(8 * 3600), 0, ntpServer);
-
-  net_flag = 1;
 }
 
-long task_runtime_1 = 0;
-void Task_my(void *pvParameters) {
-  while (1) {
-
-    if (net_flag == 1)
-      if ((millis() - task_runtime_1) > 1000) {
-        display_time();
-
-        task_runtime_1 = millis();
-      }
-
-    vTaskDelay(100);
+void wifi_update() {
+  if (net_flag == 0 && WiFi.status() == WL_CONNECTED) {
+    if (USBSerial) {
+      USBSerial.println("Wifi connected");
+    }
+    configTime((const long)(8 * 3600), 0, ntpServer);
+    net_flag = 1;
   }
 }
+
 
 void display_time() {
   struct tm timeinfo;
 
-  if (!getLocalTime(&timeinfo)) {
-    USBSerial.println("Failed to obtain time");
+  if (!getLocalTime(&timeinfo, 10)) {
+    if (USBSerial) {
+      USBSerial.println("Failed to obtain time");
+    }
     return;
   } else {
     int year = timeinfo.tm_year + 1900;
@@ -176,9 +169,9 @@ void display_time() {
 }
 
 void setup() {
-  USBSerial.begin(115200); /* prepare for possible serial debug */
+  USBSerial.begin(115200);
+  USBSerial.setTxTimeoutMs(0);  // Prevent debug output from blocking the sketch.
 
-  wifi_init();
 
   Wire.begin(IIC_SDA, IIC_SCL);
   if (!expander.begin(0x20)) {  // Replace with actual I2C address if different
@@ -225,9 +218,6 @@ void setup() {
 
   lv_init();
 
-  lv_color_t *buf1 = (lv_color_t *)heap_caps_malloc(screenWidth * screenHeight / 4 * sizeof(lv_color_t), MALLOC_CAP_DMA);
-
-  lv_color_t *buf2 = (lv_color_t *)heap_caps_malloc(screenWidth * screenHeight / 4 * sizeof(lv_color_t), MALLOC_CAP_DMA);
 
   String LVGL_Arduino = "Hello Arduino! ";
   LVGL_Arduino += String('V') + lv_version_major() + "." + lv_version_minor() + "." + lv_version_patch();
@@ -245,7 +235,7 @@ void setup() {
                                  FT3168->Arduino_IIC_Touch::Device_Mode::TOUCH_POWER_MONITOR);
 
 
-  lv_disp_draw_buf_init(&draw_buf, buf1, buf2, screenWidth * screenHeight / 4);
+  lv_disp_draw_buf_init(&draw_buf, buf, NULL, LCD_WIDTH * LCD_HEIGHT / 10);
 
   /*Initialize the display*/
   static lv_disp_drv_t disp_drv;
@@ -280,14 +270,17 @@ void setup() {
   esp_timer_create(&lvgl_tick_timer_args, &lvgl_tick_timer);
   esp_timer_start_periodic(lvgl_tick_timer, EXAMPLE_LVGL_TICK_PERIOD_MS * 1000);
 
+
   ui_init();
+  wifi_init();
 
   USBSerial.println("Setup done");
-  xTaskCreatePinnedToCore(Task_my, "Task_my", 20000, NULL, 1, NULL, 1);
 }
 
 void loop() {
-  if (qmi.getDataReady()) {
+  const uint32_t now = millis();
+  if (now - lastImuUpdate >= 100 && qmi.getDataReady()) {
+    lastImuUpdate = now;
     if (qmi.getAccelerometer(acc.x, acc.y, acc.z)) {
       angleY = acc.y;
       if (angleY < -0.8 && !rotation) {
@@ -305,6 +298,13 @@ void loop() {
 
   lv_timer_handler(); /* let the GUI do its work */
   delay(5);
+
+  wifi_update();
+  if (net_flag == 1 && now - last_time_update >= 1000) {
+    last_time_update = now;
+    display_time();
+  }
+
   if (brightness_flag == 1 && FT3168->IIC_Interrupt_Flag == true) {
     delay(100);
     if (brightness_flag == 1 && FT3168->IIC_Interrupt_Flag == true) {
@@ -316,7 +316,9 @@ void loop() {
     }
   }
 
-  i = i + 1;
-  lv_arc_set_value(ui_Arc1, i);
-  if (i > 100) { i = 0; }
+  if (now - last_arc_update >= 50) {
+    last_arc_update = now;
+    i = (i + 1) % 101;
+    lv_arc_set_value(ui_Arc1, i);
+  }
 }

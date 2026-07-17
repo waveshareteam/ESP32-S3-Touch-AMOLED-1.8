@@ -64,7 +64,7 @@ ESP-IDF 示例按照从简单到复杂的顺序组织：
 
 ## CI
 
-GitHub Actions 使用 `Build Examples` workflow 构建 first-party ESP-IDF 和 Arduino 示例：ESP-IDF 覆盖 v5.5.4 与 v6.0.2，Arduino 同时覆盖 `examples/arduino` 与 `examples/arduino-v2`，使用 Arduino-ESP32 core 3.3.10。PR 和分支 push 只构建受影响的 first-party 示例；bundled library 变更会重建对应 Arduino 示例集，workflow、发现脚本和 release 打包脚本变更会重建两个 framework surface。tag push 与手动 `all` 运行会执行完整矩阵，手动运行也可按名称或路径选择单个示例。成功的 CI 构建会上传源码构建出的可刷写固件压缩包；仓库内的工厂固件仅作为恢复/出厂镜像保留，不纳入 CI 构建。
+GitHub Actions 使用 `Build Examples` workflow 构建 first-party ESP-IDF 和 Arduino 示例：ESP-IDF 覆盖 v5.5.5 与 v6.0.2，Arduino 同时覆盖 `examples/arduino` 与 `examples/arduino-v2`，使用 Arduino-ESP32 core 3.3.11。PR 和分支 push 只构建受影响的 first-party 示例；bundled library 变更会重建对应 Arduino 示例集，workflow、发现脚本和 release 打包脚本变更会重建两个 framework surface。tag push 与手动 `all` 运行会执行完整矩阵，手动运行也可按名称或路径选择单个示例。成功的 CI 构建会上传源码构建出的可刷写固件压缩包；仓库内的工厂固件仅作为恢复/出厂镜像保留，不纳入 CI 构建。
 
 ## 支持
 
