@@ -6,7 +6,7 @@ The repository keeps hardware assets, examples, and CI support separate so users
 | --- | --- |
 | `README.md` | Repository overview and recommended entry points |
 | `README_CN.md` | Chinese repository overview and quick start |
-| `docs/` | Setup, example, and CI documentation |
+| `docs/` | Setup, example, firmware, and CI documentation |
 | `examples/README.md` | Example index |
 | `examples/esp-idf/` | Standalone ESP-IDF projects |
 | `examples/esp-idf/00_board_check` | Managed-BSP serial smoke test |
@@ -14,8 +14,11 @@ The repository keeps hardware assets, examples, and CI support separate so users
 | `examples/esp-idf/01_project_template` | Minimal managed-BSP project template |
 | `examples/esp-idf/0*_*, examples/esp-idf/1*_*` | Board, OS, peripheral, display, and LVGL examples |
 | `examples/esp-idf/90_*` | Board-specific hardware diagnostics and managed sensor checks |
-| `examples/Arduino-v3.3.5*/` | Arduino sketches and bundled libraries |
-| `Firmware/` | Factory firmware binaries and notes |
+| `examples/arduino/` | Original Arduino sketches and bundled libraries |
+| `examples/arduino-v2/` | V2 Arduino sketches and bundled libraries |
+| `config/` | Shared ESP-IDF configuration overlays and CI-facing defaults |
+| `Firmware/` | Factory firmware binaries and notes; excluded from source-build CI |
+| `releases/` | Firmware packaging scripts and release notes |
 | `CONTRIBUTING.md` | Contribution, example, and documentation guidelines |
 | `CODE_OF_CONDUCT.md` | Community participation expectations |
 | `SUPPORT.md` | Support channels and issue checklist |
@@ -23,8 +26,8 @@ The repository keeps hardware assets, examples, and CI support separate so users
 | `THIRD_PARTY.md` | Managed component and bundled library notices |
 | `.editorconfig` | Common editor whitespace and encoding settings |
 | `.gitattributes` | Git text and binary file handling |
-| `.github/workflows/` | GitHub Actions workflows |
-| `.github/scripts/` | CI helper scripts |
+| `.github/workflows/` | GitHub Actions workflows, including `Build Examples` |
+| `scripts/` | CI discovery helpers shared by GitHub Actions |
 | `.github/ISSUE_TEMPLATE/` | Public issue forms |
 | `.github/PULL_REQUEST_TEMPLATE.md` | Pull request checklist |
 

@@ -1,4 +1,5 @@
 #include "bsp/esp-bsp.h"
+#include "esp_idf_version.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -11,7 +12,14 @@ void app_main(void)
 {
     ESP_LOGI(TAG, "Starting LVGL v9 demo through managed BSP");
 
+#if ESP_IDF_VERSION < ESP_IDF_VERSION_VAL(6, 0, 0)
+    esp_log_level_t i2c_log_level = esp_log_level_get("i2c.master");
+    esp_log_level_set("i2c.master", ESP_LOG_NONE);
+#endif
     lv_display_t *display = bsp_display_start();
+#if ESP_IDF_VERSION < ESP_IDF_VERSION_VAL(6, 0, 0)
+    esp_log_level_set("i2c.master", i2c_log_level);
+#endif
     if (display == NULL) {
         ESP_LOGE(TAG, "display start failed");
         return;

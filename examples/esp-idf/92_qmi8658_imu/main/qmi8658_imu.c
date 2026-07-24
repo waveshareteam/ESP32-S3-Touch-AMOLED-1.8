@@ -16,6 +16,10 @@
 #define BOARD_I2C_SDA_IO 15
 #define IMU_SAMPLE_PERIOD_MS 200
 #define IMU_PROBE_TIMEOUT_MS 100
+#define QMI8658_RESET_REGISTER 0x60
+#define QMI8658_RESET_COMMAND 0xB0
+#define QMI8658_CTRL1_VALUE 0x60
+#define QMI8658_RESET_DELAY_MS 20
 
 static const char *TAG = "qmi8658_imu";
 
@@ -62,9 +66,25 @@ static esp_err_t qmi8658_detect_address(i2c_master_bus_handle_t bus_handle, uint
     return ESP_ERR_NOT_FOUND;
 }
 
+static esp_err_t qmi8658_soft_reset(qmi8658_dev_t *imu)
+{
+    esp_err_t ret = qmi8658_write_register(imu, QMI8658_RESET_REGISTER, QMI8658_RESET_COMMAND);
+    if (ret != ESP_OK) {
+        return ret;
+    }
+
+    vTaskDelay(pdMS_TO_TICKS(QMI8658_RESET_DELAY_MS));
+    return qmi8658_write_register(imu, QMI8658_CTRL1, QMI8658_CTRL1_VALUE);
+}
+
 static esp_err_t qmi8658_configure(qmi8658_dev_t *imu)
 {
-    esp_err_t ret = qmi8658_set_accel_range(imu, QMI8658_ACCEL_RANGE_4G);
+    esp_err_t ret = qmi8658_soft_reset(imu);
+    if (ret != ESP_OK) {
+        return ret;
+    }
+
+    ret = qmi8658_set_accel_range(imu, QMI8658_ACCEL_RANGE_4G);
     if (ret != ESP_OK) {
         return ret;
     }

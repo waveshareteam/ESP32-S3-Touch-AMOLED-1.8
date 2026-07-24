@@ -1,13 +1,16 @@
 #include <math.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 
 #include "bsp/esp-bsp.h"
+#include "driver/i2c_master.h"
 #include "driver/i2s_std.h"
 #include "esp_codec_dev_defaults.h"
 #include "esp_check.h"
 #include "esp_codec_dev.h"
 #include "esp_err.h"
+#include "esp_idf_version.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -18,6 +21,8 @@ static const char *TAG = "i2s_codec_bsp";
 #define AUDIO_BITS_PER_SAMPLE 16
 #define AUDIO_FRAME_COUNT 256
 #define AUDIO_TWO_PI 6.28318530717958647692f
+#define V2_TOUCH_I2C_ADDRESS 0x15
+#define TOUCH_PROBE_TIMEOUT_MS 50
 
 static i2s_chan_handle_t tx_handle = NULL;
 static i2s_chan_handle_t rx_handle = NULL;
@@ -42,6 +47,22 @@ static esp_err_t codec_dev_to_esp_err(int ret, const char *operation)
 
     ESP_LOGE(TAG, "%s failed: %d", operation, ret);
     return ESP_FAIL;
+}
+
+static bool board_is_v2(void)
+{
+#if ESP_IDF_VERSION < ESP_IDF_VERSION_VAL(6, 0, 0)
+    esp_log_level_t i2c_log_level = esp_log_level_get("i2c.master");
+    esp_log_level_set("i2c.master", ESP_LOG_NONE);
+#endif
+
+    const esp_err_t ret = i2c_master_probe(bsp_i2c_get_handle(), V2_TOUCH_I2C_ADDRESS, TOUCH_PROBE_TIMEOUT_MS);
+
+#if ESP_IDF_VERSION < ESP_IDF_VERSION_VAL(6, 0, 0)
+    esp_log_level_set("i2c.master", i2c_log_level);
+#endif
+
+    return ret == ESP_OK;
 }
 
 static esp_err_t i2s_driver_init(const audio_codec_data_if_t **data_if)
@@ -86,6 +107,9 @@ static esp_err_t speaker_codec_init(const audio_codec_data_if_t *data_if, esp_co
 {
     ESP_LOGI(TAG, "Initializing ES8311 speaker codec");
     ESP_RETURN_ON_ERROR(bsp_i2c_init(), TAG, "bsp i2c init failed");
+    const bool is_v2 = board_is_v2();
+    const int speaker_volume = is_v2 ? CONFIG_EXAMPLE_V2_VOICE_VOLUME : CONFIG_EXAMPLE_VOICE_VOLUME;
+    ESP_LOGI(TAG, "Using volume %d for %s hardware", speaker_volume, is_v2 ? "V2" : "original");
 
     const audio_codec_gpio_if_t *gpio_if = audio_codec_new_gpio();
     ESP_RETURN_ON_FALSE(gpio_if, ESP_FAIL, TAG, "create gpio interface failed");
@@ -129,7 +153,7 @@ static esp_err_t speaker_codec_init(const audio_codec_data_if_t *data_if, esp_co
 
     esp_codec_dev_sample_info_t fs = sample_info();
     ESP_RETURN_ON_ERROR(codec_dev_to_esp_err(esp_codec_dev_open(*speaker, &fs), "open speaker codec"), TAG, "open failed");
-    ESP_RETURN_ON_ERROR(codec_dev_to_esp_err(esp_codec_dev_set_out_vol(*speaker, CONFIG_EXAMPLE_VOICE_VOLUME),
+    ESP_RETURN_ON_ERROR(codec_dev_to_esp_err(esp_codec_dev_set_out_vol(*speaker, speaker_volume),
                                              "set speaker volume"),
                         TAG, "volume failed");
 

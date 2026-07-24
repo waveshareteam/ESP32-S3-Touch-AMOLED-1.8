@@ -24,10 +24,21 @@ body:
     validations:
       required: true
   - type: input
-    id: idf_version
+    id: framework_version
     attributes:
       label: ESP-IDF or Arduino version
-      placeholder: ESP-IDF v5.5.4
+      placeholder: ESP-IDF v5.5.5 or v6.0.2
+    validations:
+      required: true
+  - type: dropdown
+    id: firmware_origin
+    attributes:
+      label: Firmware origin
+      description: Select the firmware type used when the problem occurred.
+      options:
+        - Source build or CI artifact
+        - Factory or recovery firmware
+        - Not applicable
     validations:
       required: true
   - type: textarea
@@ -59,6 +70,11 @@ body:
       label: Serial log or build output
       description: Paste the relevant log from reset through the failure. Remove Wi-Fi passwords or other secrets.
       render: text
+  - type: textarea
+    id: hardware_notes
+    attributes:
+      label: Pin, BSP, or hardware notes
+      description: Mention pin changes, board configuration changes, or the schematic/hardware reference used, if applicable.
   - type: textarea
     id: extra
     attributes:

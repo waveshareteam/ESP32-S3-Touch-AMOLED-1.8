@@ -9,6 +9,14 @@ menu "Example audio configuration"
         range 0 100
         default 70
 
+    config EXAMPLE_V2_VOICE_VOLUME
+        int "V2 speaker volume"
+        range 0 100
+        default 90
+        help
+            Applied when the CST816 touch controller identifies V2 hardware.
+            Original hardware continues to use EXAMPLE_VOICE_VOLUME.
+
     config EXAMPLE_TONE_HZ
         int "Music test tone frequency"
         range 100 2000

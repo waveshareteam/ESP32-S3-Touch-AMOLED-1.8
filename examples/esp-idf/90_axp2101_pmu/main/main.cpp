@@ -81,11 +81,10 @@ static esp_err_t get_pmu_i2c_device(uint8_t devAddr, i2c_master_dev_handle_t *de
         pmu_i2c_dev_addr = 0;
     }
 
-    i2c_device_config_t dev_cfg = {
-        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-        .device_address = devAddr,
-        .scl_speed_hz = I2C_MASTER_FREQ_HZ,
-    };
+    i2c_device_config_t dev_cfg = {};
+    dev_cfg.dev_addr_length = I2C_ADDR_BIT_LEN_7;
+    dev_cfg.device_address = devAddr;
+    dev_cfg.scl_speed_hz = I2C_MASTER_FREQ_HZ;
     ESP_RETURN_ON_ERROR(i2c_master_bus_add_device(pmu_i2c_bus, &dev_cfg, &pmu_i2c_dev), TAG, "add PMU I2C device failed");
 
     pmu_i2c_dev_addr = devAddr;
@@ -154,16 +153,13 @@ int pmu_register_write_byte(uint8_t devAddr, uint8_t regAddr, uint8_t *data, uin
  */
 esp_err_t i2c_init(void)
 {
-    i2c_master_bus_config_t i2c_conf = {
-        .i2c_port = I2C_MASTER_NUM,
-        .sda_io_num = I2C_MASTER_SDA_IO,
-        .scl_io_num = I2C_MASTER_SCL_IO,
-        .clk_source = I2C_CLK_SRC_DEFAULT,
-        .glitch_ignore_cnt = 7,
-        .flags = {
-            .enable_internal_pullup = true,
-        },
-    };
+    i2c_master_bus_config_t i2c_conf = {};
+    i2c_conf.i2c_port = I2C_MASTER_NUM;
+    i2c_conf.sda_io_num = I2C_MASTER_SDA_IO;
+    i2c_conf.scl_io_num = I2C_MASTER_SCL_IO;
+    i2c_conf.clk_source = I2C_CLK_SRC_DEFAULT;
+    i2c_conf.glitch_ignore_cnt = 7;
+    i2c_conf.flags.enable_internal_pullup = true;
     return i2c_new_master_bus(&i2c_conf, &pmu_i2c_bus);
 }
 

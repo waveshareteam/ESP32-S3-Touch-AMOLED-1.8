@@ -12,7 +12,7 @@ This guide uses the ESP-IDF examples for the Waveshare ESP32-S3-Touch-AMOLED-1.8
 
 ## ESP-IDF Version
 
-Use ESP-IDF v5.5.x for the current ESP-IDF examples. The CI workflow builds with ESP-IDF v5.5.4 and target `esp32s3`.
+Use ESP-IDF v5.5.x or v6.0.x for the current ESP-IDF examples. The CI workflow builds with ESP-IDF v5.5.5 and v6.0.2 for target `esp32s3`.
 
 The examples use ESP-IDF Component Manager to download managed dependencies during the first build. Make sure the build host has internet access or a configured component cache.
 
@@ -46,8 +46,8 @@ For new ESP-IDF projects, prefer this dependency in `main/idf_component.yml`:
 
 ```yaml
 dependencies:
-  idf: ">=5.5,<6.0"
-  waveshare/esp32_s3_touch_amoled_1_8: "^2.0.1"
+  idf: ">=5.5,<6.1"
+  waveshare/esp32_s3_touch_amoled_1_8: "^2.0.3"
 ```
 
 Then include the BSP API:

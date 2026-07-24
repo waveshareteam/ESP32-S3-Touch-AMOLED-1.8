@@ -2,7 +2,7 @@
 
 Minimal ESP-IDF project skeleton adapted from the ESP32-P4 platform example.
 
-Unlike an empty project, this template already declares the online `waveshare/esp32_s3_touch_amoled_1_8` dependency and initializes the BSP I2C bus, so it is a practical starting point for new board projects.
+Unlike an empty project, this template already declares the online `waveshare/esp32_s3_touch_amoled_1_8` dependency and exposes the BSP board definitions, so it is a practical starting point for new board projects.
 
 ## Hardware
 
@@ -25,6 +25,6 @@ The serial monitor prints the board name, I2C pins, display resolution, and a pe
 
 ## Notes
 
-- Add only the board services your application needs, such as display, touch, SD card, audio, RTC, or IMU.
+- Initialize only the board services your application needs, such as display, touch, SD card, audio, RTC, or IMU.
 - Keep managed dependencies in `main/idf_component.yml`.
 - Do not copy generated `managed_components/`, `dependencies.lock`, or local `sdkconfig` files into a reusable template.

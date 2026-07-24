@@ -14,8 +14,7 @@ void app_main(void)
     printf("Board I2C: SDA=%d SCL=%d\n", BSP_I2C_SDA, BSP_I2C_SCL);
     printf("Display: %dx%d\n", BSP_LCD_H_RES, BSP_LCD_V_RES);
 
-    ESP_ERROR_CHECK(bsp_i2c_init());
-    ESP_LOGI(TAG, "BSP I2C initialized. Add display, touch, SD, or audio code from the other examples.");
+    ESP_LOGI(TAG, "Managed BSP linked. Initialize only the board services used by the application.");
 
     while (true) {
         ESP_LOGI(TAG, "template running");

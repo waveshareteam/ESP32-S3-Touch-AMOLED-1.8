@@ -10,7 +10,7 @@ It uses the online `waveshare/esp32_s3_touch_amoled_1_8` BSP component instead o
 - Starts LVGL and renders a small touch dashboard.
 - Sets display brightness through an LVGL slider and the BSP API.
 - Shows heap and PSRAM information.
-- Probes the onboard SD card through `bsp_sdcard_mount()` at startup and from the on-screen refresh button, then writes a small marker file when a card is present.
+- Probes the onboard SD card through `bsp_sdcard_mount()` at startup and from the on-screen refresh button, then writes `/sdcard/bsp.txt` when a card is present.
 
 ## Build and Flash
 
@@ -25,5 +25,6 @@ Replace `PORT` with the serial port for the board.
 ## Notes
 
 - A missing SD card is reported on screen and in the serial log, but it does not fail the example.
+- The short marker filename remains compatible with FAT volumes when long filename support is disabled.
 - The dependency is declared in [main/idf_component.yml](main/idf_component.yml). During build, IDF Component Manager downloads the BSP into `managed_components`.
 - The custom partition table leaves room for LVGL, BSP, and managed component code.
