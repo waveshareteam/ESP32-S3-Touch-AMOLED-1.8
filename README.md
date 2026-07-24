@@ -7,14 +7,16 @@
     <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/waveshareteam/ESP32-S3-Touch-AMOLED-1.8"></a>
   </p>
   <p>
-    <a href="https://www.waveshare.com/wiki/ESP32-S3-Touch-AMOLED-1.8">🌐 Product Wiki</a> ·
-    <a href="https://github.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/releases">🏷️ GitHub Releases</a> ·
-    <a href="https://github.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/actions/workflows/examples.yml">📦 CI Firmware Artifacts</a> ·
+    <a href="README_CN.md">中文</a> ·
+    <a href="https://www.waveshare.com/esp32-s3-touch-amoled-1.8.htm">🌐 Product Page</a> ·
+    <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.8">📚 Documentation</a> ·
+    <a href="https://github.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/releases">📦 Firmware Releases</a> ·
     <a href="examples/esp-idf/">🧩 ESP-IDF Examples</a> ·
-    <a href="examples/arduino/">🔧 Arduino Examples</a> ·
-    <a href="docs/">📚 Documentation</a> ·
-    <a href="README_CN.md">中文</a>
+    <a href="examples/arduino/">🔧 Arduino Examples</a>
   </p>
+  <a href="https://www.waveshare.com/esp32-s3-touch-amoled-1.8.htm">
+    <img src="assets/ESP32-S3-Touch-AMOLED-1.8-details-1.jpg" alt="Waveshare ESP32-S3-Touch-AMOLED-1.8" width="600">
+  </a>
 </div>
 
 ---
@@ -28,7 +30,7 @@ documentation for the Waveshare ESP32-S3-Touch-AMOLED-1.8.
 The board combines an ESP32-S3 with a high-resolution AMOLED display,
 capacitive touch, power management, RTC, motion sensing, microSD storage, and
 audio interfaces. The repository supports both display and touch revisions:
-the original SH8601/FT3168 board and the newer CO5300/CST816 board.
+the original SH8601/FT3168 board and the newer CO5300/CST820 board.
 
 ## 🖥️ Hardware Overview
 
@@ -37,13 +39,19 @@ the original SH8601/FT3168 board and the newer CO5300/CST816 board.
 | MCU | ESP32-S3 |
 | Display | 1.8-inch 368 x 448 QSPI AMOLED |
 | Original display / touch | SH8601 with FT3168 capacitive touch |
-| V2 display / touch | CO5300 with CST816 capacitive touch |
+| V2 display / touch | CO5300 with CST820 capacitive touch |
 | Power management | AXP2101 PMU |
 | Real-time clock | PCF85063A RTC |
 | Motion sensor | QMI8658 six-axis IMU |
 | Audio | ES8311 codec, onboard microphone input, and speaker amplifier |
 | Storage | microSD over SDMMC |
 | Board support | Managed component: `waveshare/esp32_s3_touch_amoled_1_8` |
+
+> [!NOTE]
+> The V2 board is fitted with a CST820 touch controller. Some bundled Arduino
+> sources retain <code>Arduino_CST816x</code> family or API identifiers for
+> compatible driver code; those identifiers do not describe the fitted V2
+> touch chip.
 
 > [!IMPORTANT]
 > A board-level schematic is not included in this repository yet. CI validates
@@ -124,7 +132,7 @@ libraries:
 | Set | Display / touch | First-party sketches |
 | --- | --- | ---: |
 | [Original](examples/arduino/examples/) | SH8601 / FT3168 | 16 |
-| [V2](examples/arduino-v2/examples/) | CO5300 / CST816 | 10 |
+| [V2](examples/arduino-v2/examples/) | CO5300 / CST820 | 10 |
 
 The sets cover display bring-up, drawing, RTC, LVGL, IMU, SD, and ES8311 audio.
 The original set additionally includes Wi-Fi analysis, clock, AXP2101
@@ -173,6 +181,8 @@ board options, artifact behavior, and hardware validation boundaries.
 
 ## 📚 Documentation
 
+- [Product Page](https://www.waveshare.com/esp32-s3-touch-amoled-1.8.htm)
+- [Official Product Documentation](https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.8)
 - [Getting Started](docs/GETTING_STARTED.md)
 - [Examples Guide](docs/EXAMPLES_GUIDE.md)
 - [Repository Structure](docs/PROJECT_STRUCTURE.md)
