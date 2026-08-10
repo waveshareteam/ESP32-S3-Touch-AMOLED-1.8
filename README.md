@@ -14,7 +14,7 @@
     <a href="examples/esp-idf/">🧩 ESP-IDF Examples</a> ·
     <a href="examples/README.md#arduino">🔧 Arduino Examples</a>
   </p>
-  <img src="assets/ESP32-S3-Touch-AMOLED-1.8-details-1.jpg" alt="Waveshare ESP32-S3-Touch-AMOLED-1.8" width="600">
+  <img src="./assets/ESP32-S3-Touch-AMOLED-1.8-hero.webp" alt="Waveshare ESP32-S3-Touch-AMOLED-1.8 development board" width="800">
 </div>
 
 ---
