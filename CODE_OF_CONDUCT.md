@@ -1,5 +1,7 @@
 # Code of Conduct
 
+简体中文请参见 [CODE_OF_CONDUCT_ZH.md](CODE_OF_CONDUCT_ZH.md)。
+
 This project is intended to be a welcoming, practical space for Waveshare board users, customers, contributors, and maintainers.
 
 ## Expected Behavior

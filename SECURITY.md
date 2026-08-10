@@ -1,11 +1,11 @@
 # Security Policy
 
-Please do not open public issues for suspected security vulnerabilities.
+中文请参见 [SECURITY_ZH.md](SECURITY_ZH.md)。
 
-Use GitHub private vulnerability reporting for this repository when it is available. If private reporting is not available, contact Waveshare through the official support channels listed on the product wiki:
+Please do not open public issues for suspected security vulnerabilities. GitHub private vulnerability reporting is currently disabled for this repository.
 
-https://www.waveshare.com/wiki/ESP32-S3-Touch-AMOLED-1.8
+To request a private escalation, use the verified official Waveshare support portal: https://service.waveshare.com/. Do not send vulnerability details through that portal until Waveshare confirms a private channel.
 
-Include a short description, affected example or component, reproduction steps, and any logs needed to understand the issue. Avoid sharing secrets, Wi-Fi passwords, private keys, or customer data in reports.
+After a private channel is confirmed, include a short description, affected example or component, reproduction steps, and any logs needed to understand the issue. Do not share secrets, Wi-Fi passwords, private keys, or customer data in public reports.
 
 Public issues are appropriate for build failures, documentation problems, and normal example bugs that do not expose a security risk.

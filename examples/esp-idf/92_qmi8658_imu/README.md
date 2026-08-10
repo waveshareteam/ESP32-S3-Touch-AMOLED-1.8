@@ -1,5 +1,7 @@
 # 92_qmi8658_imu
 
+[简体中文](README_ZH.md)
+
 QMI8658 IMU diagnostic for the Waveshare ESP32-S3-Touch-AMOLED-1.8 board.
 
 This example uses the managed `waveshare/qmi8658` component instead of the older checked-in driver copy. It keeps the code small and focused on the board-level IMU bring-up path.
@@ -21,7 +23,7 @@ The dependency is declared in [main/idf_component.yml](main/idf_component.yml):
 
 ```yaml
 dependencies:
-  idf: ">=5.5"
+  idf: ">=5.5,<6.1"
   waveshare/qmi8658:
     version: "^2.0.0"
     public: true

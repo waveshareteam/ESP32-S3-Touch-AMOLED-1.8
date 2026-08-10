@@ -1,5 +1,7 @@
 # 00_board_check
 
+[简体中文](README_ZH.md)
+
 Board bring-up check adapted from the ESP32-P4 platform example for ESP32-S3-Touch-AMOLED-1.8.
 
 It prints chip, flash, PSRAM, BSP capability, and key board pin information. It uses the managed `waveshare/esp32_s3_touch_amoled_1_8` component and does not require display, touch, SD card, Wi-Fi, or audio accessories.

@@ -1,5 +1,7 @@
 # 04_freertos_tasks
 
+[简体中文](README_ZH.md)
+
 FreeRTOS task and queue demo adapted from the ESP32-P4 platform example.
 
 The producer task sends uptime messages to a queue. The consumer task prints them.

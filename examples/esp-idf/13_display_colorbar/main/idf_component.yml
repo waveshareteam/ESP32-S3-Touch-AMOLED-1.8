@@ -1,7 +1,7 @@
 version: "1.0.0"
 
 dependencies:
-  idf: ">=5.5"
+  idf: ">=5.5,<6.1"
   espressif/esp_lcd_co5300:
     version: "^2.1.0"
     public: true

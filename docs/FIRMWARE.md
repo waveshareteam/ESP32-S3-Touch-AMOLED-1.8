@@ -1,5 +1,7 @@
 # Firmware Artifacts
 
+中文请参见 [FIRMWARE_ZH.md](FIRMWARE_ZH.md)。
+
 This repository has two different firmware artifact types.
 
 ## Factory Binaries
@@ -11,6 +13,13 @@ Factory binaries are not source projects:
 - They are not rebuilt by GitHub Actions.
 - They are not repackaged as CI artifacts.
 - They should not be treated as generated output from this repository.
+
+### Read-only identity records
+
+The following SHA-256 values identify the checked-in factory binaries as they are supplied. They are read-only identity records, not reproducible-build claims.
+
+- `Firmware/ESP32-S3-Touch-AMOLED-1.8-FactoryXiaozhi_250805.bin`: `033BA27F0D1824835E90FE6B41D2DB8C1F13CDA7E1D80C82B3F7537DAFB8DC8D`
+- `Firmware/ESP32-S3-Touch-AMOLED-1.8-V2-FactoryXiaozhi_260601.bin`: `6F188FB9D35EE793A3423934A4FA4E7C1FEF9CC9DAE76F9F177DABE854A6CDB3`
 
 Keep factory-binary documentation focused on the board revision, intended use, and flashing or recovery notes.
 

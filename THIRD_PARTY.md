@@ -1,5 +1,7 @@
 # Third-Party Software
 
+简体中文请参见 [THIRD_PARTY_ZH.md](THIRD_PARTY_ZH.md)。
+
 This repository includes source examples, firmware assets, managed component references, and bundled third-party libraries.
 
 ## Managed ESP-IDF Components

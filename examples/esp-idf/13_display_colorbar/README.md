@@ -1,5 +1,7 @@
 # 13_display_colorbar
 
+[简体中文](README_ZH.md)
+
 Minimal CO5300 panel test for ESP32-S3-Touch-AMOLED-1.8 and V2 boards.
 
 ## Hardware

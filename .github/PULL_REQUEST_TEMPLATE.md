@@ -1,5 +1,7 @@
 ## Summary
 
+[简体中文](PULL_REQUEST_TEMPLATE_ZH.md)
+
 - TBD
 
 ## Scope

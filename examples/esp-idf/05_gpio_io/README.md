@@ -1,5 +1,7 @@
 # 05_gpio_io
 
+[简体中文](README_ZH.md)
+
 GPIO input/output loopback demo adapted from the ESP32-P4 platform example.
 
 The default configuration does not drive any pin. Use `idf.py menuconfig` and choose two exposed, unused GPIOs, then connect output to input with a jumper.

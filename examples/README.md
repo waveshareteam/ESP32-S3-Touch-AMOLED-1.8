@@ -1,5 +1,7 @@
 # Examples
 
+中文请参见 [README_ZH.md](README_ZH.md)。
+
 This directory contains ESP-IDF projects and Arduino sketches for the Waveshare ESP32-S3-Touch-AMOLED-1.8 board.
 
 ## ESP-IDF

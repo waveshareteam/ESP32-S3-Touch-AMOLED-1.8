@@ -7,23 +7,7 @@ on:
       - master
     tags:
       - "v*"
-    paths:
-      - ".github/workflows/examples.yml"
-      - "scripts/discover_examples.py"
-      - "releases/package_firmware.py"
-      - "config/**"
-      - "examples/esp-idf/**"
-      - "examples/arduino/**"
-      - "examples/arduino-v2/**"
   pull_request:
-    paths:
-      - ".github/workflows/examples.yml"
-      - "scripts/discover_examples.py"
-      - "releases/package_firmware.py"
-      - "config/**"
-      - "examples/esp-idf/**"
-      - "examples/arduino/**"
-      - "examples/arduino-v2/**"
   workflow_dispatch:
     inputs:
       target:
@@ -39,18 +23,33 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  repository-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Test routing and packaging policy helpers
+        run: python3 -B -m unittest discover -s tests -v
+      - name: Check limited first-party documentation policy
+        run: python3 -B scripts/check_repository_policy.py --config repository_policy.json
+
   discover-esp-idf:
+    needs: repository-policy
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.discover.outputs.matrix }}
       count: ${{ steps.discover.outputs.count }}
+      route: ${{ steps.discover.outputs.route }}
+      docs_only: ${{ steps.discover.outputs.docs_only }}
+      firmware: ${{ steps.discover.outputs.firmware }}
+      release_review: ${{ steps.discover.outputs.release_review }}
+      unknown_paths: ${{ steps.discover.outputs.unknown_paths }}
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - id: discover
         env:
-          SELECTOR: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.target || '' }}
+          SELECTOR: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.target) || (startsWith(github.ref, 'refs/tags/') && 'all') || '' }}
           BASE_REF: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
           HEAD_REF: ${{ github.sha }}
         run: |
@@ -59,13 +58,12 @@ jobs:
             --selector "$SELECTOR" \
             --base-ref "$BASE_REF" \
             --head-ref "$HEAD_REF" \
-            --fallback-all \
             --idf-versions v5.5.5,v6.0.2 \
             --github-output "$GITHUB_OUTPUT"
 
   build-esp-idf:
     needs: discover-esp-idf
-    if: needs.discover-esp-idf.outputs.count != '0'
+    if: needs.discover-esp-idf.outputs.route != 'none'
     runs-on: ubuntu-latest
     container: espressif/idf:${{ matrix.idf }}
     strategy:
@@ -99,17 +97,23 @@ jobs:
           if-no-files-found: error
 
   discover-arduino:
+    needs: repository-policy
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.discover.outputs.matrix }}
       count: ${{ steps.discover.outputs.count }}
+      route: ${{ steps.discover.outputs.route }}
+      docs_only: ${{ steps.discover.outputs.docs_only }}
+      firmware: ${{ steps.discover.outputs.firmware }}
+      release_review: ${{ steps.discover.outputs.release_review }}
+      unknown_paths: ${{ steps.discover.outputs.unknown_paths }}
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - id: discover
         env:
-          SELECTOR: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.target || '' }}
+          SELECTOR: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.target) || (startsWith(github.ref, 'refs/tags/') && 'all') || '' }}
           BASE_REF: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
           HEAD_REF: ${{ github.sha }}
         run: |
@@ -118,14 +122,13 @@ jobs:
             --selector "$SELECTOR" \
             --base-ref "$BASE_REF" \
             --head-ref "$HEAD_REF" \
-            --fallback-all \
             --arduino-core 3.3.11 \
             --fqbn esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB \
             --github-output "$GITHUB_OUTPUT"
 
   build-arduino:
     needs: discover-arduino
-    if: needs.discover-arduino.outputs.count != '0'
+    if: needs.discover-arduino.outputs.route != 'none'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

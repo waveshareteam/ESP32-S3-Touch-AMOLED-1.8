@@ -1,5 +1,7 @@
 # BSP Quick Start
 
+[简体中文](README_ZH.md)
+
 This example is the recommended ESP-IDF starting point for the Waveshare ESP32-S3-Touch-AMOLED-1.8 board.
 
 It uses the online `waveshare/esp32_s3_touch_amoled_1_8` BSP component instead of checked-in driver copies.

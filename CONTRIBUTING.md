@@ -1,5 +1,7 @@
 # Contributing
 
+简体中文请参见 [CONTRIBUTING_ZH.md](CONTRIBUTING_ZH.md)。
+
 Thank you for helping improve the ESP32-S3-Touch-AMOLED-1.8 examples.
 
 This repository is customer-facing, so changes should keep the examples easy to build, easy to compare, and safe to run on the board.

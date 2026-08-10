@@ -1,5 +1,7 @@
 # Getting Started
 
+中文请参见 [GETTING_STARTED_ZH.md](GETTING_STARTED_ZH.md)。
+
 This guide uses the ESP-IDF examples for the Waveshare ESP32-S3-Touch-AMOLED-1.8 board.
 
 ## Hardware

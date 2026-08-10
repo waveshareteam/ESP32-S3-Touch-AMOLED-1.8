@@ -1,5 +1,7 @@
 # 91_pcf85063_rtc
 
+[简体中文](README_ZH.md)
+
 PCF85063A RTC diagnostic for the Waveshare ESP32-S3-Touch-AMOLED-1.8 board.
 
 This example uses the managed `waveshare/pcf85063a` component instead of a checked-in RTC driver copy. It is intended for low-level RTC bring-up after the board I2C bus has been verified.
@@ -19,7 +21,7 @@ The dependency is declared in [main/idf_component.yml](main/idf_component.yml):
 
 ```yaml
 dependencies:
-  idf: ">=5.5,<6.0"
+  idf: ">=5.5,<6.1"
   waveshare/pcf85063a:
     version: "^2.0.0"
     public: true
