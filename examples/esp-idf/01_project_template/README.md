@@ -1,5 +1,7 @@
 # 01_project_template
 
+[简体中文](README_ZH.md)
+
 Minimal ESP-IDF project skeleton adapted from the ESP32-P4 platform example.
 
 Unlike an empty project, this template already declares the online `waveshare/esp32_s3_touch_amoled_1_8` dependency and exposes the BSP board definitions, so it is a practical starting point for new board projects.

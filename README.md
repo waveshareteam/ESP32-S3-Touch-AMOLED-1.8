@@ -7,16 +7,14 @@
     <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/waveshareteam/ESP32-S3-Touch-AMOLED-1.8"></a>
   </p>
   <p>
-    <a href="README_CN.md">中文</a> ·
+    <a href="README_ZH.md">中文</a> ·
     <a href="https://www.waveshare.com/esp32-s3-touch-amoled-1.8.htm">🌐 Product Page</a> ·
     <a href="https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-1.8">📚 Documentation</a> ·
     <a href="https://github.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/releases">📦 Firmware Releases</a> ·
     <a href="examples/esp-idf/">🧩 ESP-IDF Examples</a> ·
-    <a href="examples/arduino/">🔧 Arduino Examples</a>
+    <a href="examples/README.md#arduino">🔧 Arduino Examples</a>
   </p>
-  <a href="https://www.waveshare.com/esp32-s3-touch-amoled-1.8.htm">
-    <img src="assets/ESP32-S3-Touch-AMOLED-1.8-details-1.jpg" alt="Waveshare ESP32-S3-Touch-AMOLED-1.8" width="600">
-  </a>
+  <img src="./assets/ESP32-S3-Touch-AMOLED-1.8-hero.webp" alt="Waveshare ESP32-S3-Touch-AMOLED-1.8 development board" width="800">
 </div>
 
 ---
@@ -156,6 +154,8 @@ See [Examples](examples/README.md) and the
 | Arduino-ESP32 original | `3.3.11` | 16 |
 | Arduino-ESP32 V2 | `3.3.11` | 10 |
 
+These stable versions were reverified from official releases on 2026-08-10.
+
 The
 [Build Examples workflow](https://github.com/waveshareteam/ESP32-S3-Touch-AMOLED-1.8/actions/workflows/examples.yml)
 runs two discovery jobs and up to 60 firmware build jobs. Pull request and
@@ -189,7 +189,7 @@ board options, artifact behavior, and hardware validation boundaries.
 - [Continuous Integration](docs/CI.md)
 - [Firmware Artifacts](docs/FIRMWARE.md)
 - [Release Tools](releases/README.md)
-- [Chinese README](README_CN.md)
+- [中文说明](README_ZH.md)
 
 ## 🤝 Support and Contributions
 

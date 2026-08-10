@@ -1,11 +1,14 @@
 # Project Structure
 
+中文请参见 [PROJECT_STRUCTURE_ZH.md](PROJECT_STRUCTURE_ZH.md)。
+
 The repository keeps hardware assets, examples, and CI support separate so users can find the right starting point quickly.
 
 | Path | Role |
 | --- | --- |
 | `README.md` | Repository overview and recommended entry points |
-| `README_CN.md` | Chinese repository overview and quick start |
+| `README_ZH.md` | Maintained Simplified Chinese repository overview |
+| `README_CN.md` | Compatibility entry linking to `README_ZH.md` |
 | `docs/` | Setup, example, firmware, and CI documentation |
 | `examples/README.md` | Example index |
 | `examples/esp-idf/` | Standalone ESP-IDF projects |

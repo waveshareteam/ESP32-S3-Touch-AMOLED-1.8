@@ -1,5 +1,7 @@
 # Support
 
+简体中文请参见 [SUPPORT_ZH.md](SUPPORT_ZH.md)。
+
 Use the official product wiki and repository issues for customer support and example feedback.
 
 ## Product Resources

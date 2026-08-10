@@ -1,5 +1,7 @@
 # ESP-IDF Examples Guide
 
+中文请参见 [EXAMPLES_GUIDE_ZH.md](EXAMPLES_GUIDE_ZH.md)。
+
 Start with serial-only checks, then move outward to board services, peripherals, and display UI.
 
 ## Suggested Path
@@ -38,11 +40,11 @@ dependencies:
   waveshare/esp32_s3_touch_amoled_1_8: "^2.0.3"
 ```
 
-The ESP Component Registry lists `2.0.3` as the latest `waveshare/esp32_s3_touch_amoled_1_8` release for `esp32s3` as of 2026-07-15. Checked-in component copies should only be used when an example intentionally demonstrates a local patch or a compatibility fallback. The RTC and IMU diagnostics use `waveshare/pcf85063a` `^2.0.0` and `waveshare/qmi8658` `^2.0.0`, which remain the current managed sensor releases.
+The ESP Component Registry lists `2.0.3` as the latest `waveshare/esp32_s3_touch_amoled_1_8` release for `esp32s3` as of 2026-08-10. Checked-in component copies should only be used when an example intentionally demonstrates a local patch or a compatibility fallback. The RTC and IMU diagnostics use `waveshare/pcf85063a` `^2.0.0` and `waveshare/qmi8658` `^2.0.0`, which remain the current managed sensor releases. The `idf: ">=5.5,<6.1"` ceiling matches the verified v5.5/v6.0 matrix and must be revisited when a newer v6 minor is required and passes CI.
 
 ## CI Coverage
 
-The `Build Examples` workflow builds first-party ESP-IDF examples with ESP-IDF v5.5.5 and v6.0.2 and first-party Arduino sketches with Arduino-ESP32 core 3.3.11. Pull request and push runs use the default `all` target; manual runs can select one example by name or path. Successful source builds upload flashable firmware archives; checked-in factory binaries are excluded from source-build packaging. See [CI.md](CI.md), [FIRMWARE.md](FIRMWARE.md), and [../releases/README.md](../releases/README.md) for details.
+The `Build Examples` workflow builds first-party ESP-IDF examples with ESP-IDF v5.5.5 and v6.0.2 and first-party Arduino sketches with Arduino-ESP32 core 3.3.11. Those stable versions were reverified from official releases on 2026-08-10; the ESP-IDF coverage retains the v5.5-to-v6.0 migration context and includes no prereleases. Pull request and supported-branch push runs build change-affected examples; tag runs and manual runs with `target=all` build the full matrix. Successful source builds upload flashable firmware archives; checked-in factory binaries are excluded from source-build packaging. See [CI.md](CI.md), [FIRMWARE.md](FIRMWARE.md), and [../releases/README.md](../releases/README.md) for details.
 
 ## Customer-Facing Checklist
 

@@ -1,5 +1,7 @@
 # 90_axp2101_pmu
 
+[简体中文](README_ZH.md)
+
 AXP2101 PMU diagnostic for the Waveshare ESP32-S3-Touch-AMOLED-1.8 board.
 
 This is a legacy local-component example. It is kept in the `90_` range because normal application projects should start from the managed online BSP examples instead of copying low-level PMU driver code.

@@ -1,5 +1,7 @@
 # Release Scripts
 
+中文请参见 [README_ZH.md](README_ZH.md)。
+
 This directory contains helper scripts for packaging CI build outputs into flashable firmware archives and downloading completed workflow artifacts.
 
 ## ESP-IDF

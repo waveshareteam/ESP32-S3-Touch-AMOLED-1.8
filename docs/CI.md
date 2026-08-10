@@ -1,5 +1,7 @@
 # Continuous Integration
 
+中文请参见 [CI_ZH.md](CI_ZH.md)。
+
 This repository uses the `Build Examples` GitHub Actions workflow to discover examples dynamically, build them, and upload flashable source-built firmware artifacts.
 
 ## Discovery
@@ -12,7 +14,7 @@ The workflow uses `scripts/discover_examples.py` for both framework surfaces:
 
 `workflow_dispatch` accepts `all`, an example directory name, or a repo-relative example path. Maintainers can run the full matrix or a single example.
 
-Pull request and branch push runs compare the event base and head revisions, then build only affected first-party examples. A bundled-library change rebuilds all first-party sketches in the matching Arduino root. Changes to the workflow, discovery script, or firmware packager rebuild both surfaces; shared ESP-IDF configuration changes rebuild the ESP-IDF surface. Tag pushes and events without a usable base revision fall back to the full matrix.
+The repository-policy job is always visible on pull requests. Its routing contract fails closed: unavailable or incomplete diff data is an error, not a fallback build or pass. Documentation-only changes, including `Firmware/` documentation or immutable binaries, are reported without default example builds; `Firmware/` remains outside the example matrix. A usable pull request or branch diff builds only affected first-party examples. A bundled-library change rebuilds all first-party sketches in the matching Arduino root. Workflow, discovery, policy, routing, or release-packaging changes run the relevant full framework surface; shared ESP-IDF configuration changes rebuild the ESP-IDF surface. Tag pushes and manual `all` runs build the full matrix.
 
 Manual runs can build the full matrix or narrow it by passing an example name, a parent example directory such as `08_LVGL_Animation`, or a repo-relative path to `target`.
 
@@ -23,7 +25,9 @@ Current CI matrix:
 - ESP-IDF `v5.5.5` and `v6.0.2`, target `esp32s3`.
 - Arduino-ESP32 core `3.3.11`, FQBN `esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB`, using bundled libraries from the matching `examples/arduino/libraries` or `examples/arduino-v2/libraries` directory.
 
-The selected framework versions were resolved from upstream stable releases on 2026-07-15. Do not replace them with beta, release-candidate, preview, or nightly tags unless the repository intentionally opts into that coverage.
+The selected framework versions were reverified from official stable releases on 2026-08-10: ESP-IDF `v5.5.5` and `v6.0.2`, plus Arduino-ESP32 `3.3.11`. The ESP-IDF coverage retains the v5.5-to-v6.0 migration context. Do not replace them with beta, release-candidate, preview, or nightly tags unless the repository intentionally opts into that coverage.
+
+The full matrix contains 60 firmware build jobs: 17 ESP-IDF examples for each of two ESP-IDF versions, plus 16 original and 10 V2 Arduino sketches.
 
 ## Firmware Artifacts
 
@@ -57,7 +61,11 @@ python scripts/discover_examples.py --surface esp-idf --selector 00_board_check
 python scripts/discover_examples.py --surface esp-idf --selector all
 python scripts/discover_examples.py --surface arduino --selector all
 python scripts/discover_examples.py --surface arduino --selector 08_LVGL_Animation
+python -B -m unittest discover -s tests -v
+python -B scripts/check_repository_policy.py --config repository_policy.json
 ```
+
+The last two commands are the exact non-build checks for the repository policy and its tests. Product builds are a separate local or GitHub Actions responsibility; these checks do not compile examples or validate hardware.
 
 The packaging helper expects an existing ESP-IDF or Arduino build output and is normally exercised inside CI after the framework build finishes.
 
