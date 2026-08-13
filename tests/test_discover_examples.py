@@ -86,6 +86,12 @@ class DiscoverExamplesCliTests(unittest.TestCase):
             self.assertFalse(result["docs_only"])
         release = self.result("arduino", "Firmware/image.bin\n")
         self.assertTrue(release["release_review"])
+        self.assertEqual(release["firmware_paths"], ["Firmware/image.bin"])
+        self.assertEqual(release["release_paths"], ["Firmware/image.bin"])
+        manifest = self.result("esp-idf", "firmware_integrity.json\n")
+        self.assertEqual(manifest["route"], "none")
+        self.assertEqual(manifest["firmware_paths"], ["firmware_integrity.json"])
+        self.assertEqual(manifest["release_paths"], ["firmware_integrity.json"])
         unknown = self.result("esp-idf", "new-build-input.toml\n")
         self.assertEqual(unknown["route"], "all")
         self.assertEqual(unknown["unknown_paths"], ["new-build-input.toml"])
@@ -162,7 +168,8 @@ class DiscoverExamplesCliTests(unittest.TestCase):
         self.assertIn(new.relative_to(root).as_posix(), result["changed_paths"])
         output_values = dict(line.split("=", 1) for line in output.read_text(encoding="utf-8").splitlines())
         self.assertEqual(output_values["count"], str(expected_count))
-        for key in ("matrix", "route", "docs_only", "firmware", "release_review", "unknown_paths", "changed_paths"):
+        for key in ("matrix", "route", "docs_only", "firmware", "firmware_paths", "release_review",
+                    "release_paths", "unknown_paths", "changed_paths"):
             self.assertIn(key, output_values)
 
 

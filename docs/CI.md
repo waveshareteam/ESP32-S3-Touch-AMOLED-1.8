@@ -14,7 +14,7 @@ The workflow uses `scripts/discover_examples.py` for both framework surfaces:
 
 `workflow_dispatch` accepts `all`, an example directory name, or a repo-relative example path. Maintainers can run the full matrix or a single example.
 
-The repository-policy job is always visible on pull requests. Its routing contract fails closed: unavailable or incomplete diff data is an error, not a fallback build or pass. Documentation-only changes, including `Firmware/` documentation or immutable binaries, are reported without default example builds; `Firmware/` remains outside the example matrix. A usable pull request or branch diff builds only affected first-party examples. A bundled-library change rebuilds all first-party sketches in the matching Arduino root. Workflow, discovery, policy, routing, or release-packaging changes run the relevant full framework surface; shared ESP-IDF configuration changes rebuild the ESP-IDF surface. Tag pushes and manual `all` runs build the full matrix.
+The repository-policy job is always visible on pull requests. Its routing contract fails closed: unavailable or incomplete diff data is an error, not a fallback build or pass. A separate `change-scope` job consumes and publishes the documentation-only, firmware, immutable-artifact-review, and unknown-path classifier outputs. Documentation-only changes select no example builds. Every `Firmware/` file kind is reported separately and remains outside the example matrix; binary or archive paths also receive an explicit release-review warning. A usable pull request or branch diff builds only affected first-party examples. A bundled-library change rebuilds all first-party sketches in the matching Arduino root. Workflow, discovery, policy, routing, or release-packaging changes run the relevant full framework surface; shared ESP-IDF configuration changes rebuild the ESP-IDF surface. Tag pushes and manual `all` runs build the full matrix.
 
 Manual runs can build the full matrix or narrow it by passing an example name, a parent example directory such as `08_LVGL_Animation`, or a repo-relative path to `target`.
 
@@ -25,7 +25,7 @@ Current CI matrix:
 - ESP-IDF `v5.5.5` and `v6.0.2`, target `esp32s3`.
 - Arduino-ESP32 core `3.3.11`, FQBN `esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB`, using bundled libraries from the matching `examples/arduino/libraries` or `examples/arduino-v2/libraries` directory.
 
-The selected framework versions were reverified from official stable releases on 2026-08-10: ESP-IDF `v5.5.5` and `v6.0.2`, plus Arduino-ESP32 `3.3.11`. The ESP-IDF coverage retains the v5.5-to-v6.0 migration context. Do not replace them with beta, release-candidate, preview, or nightly tags unless the repository intentionally opts into that coverage.
+The selected framework versions were reverified from official stable releases on 2026-08-13: ESP-IDF `v5.5.5` and `v6.0.2`, plus Arduino-ESP32 `3.3.11`. The ESP-IDF coverage retains the v5.5-to-v6.0 migration context. Do not replace them with beta, release-candidate, preview, or nightly tags unless the repository intentionally opts into that coverage.
 
 The full matrix contains 60 firmware build jobs: 17 ESP-IDF examples for each of two ESP-IDF versions, plus 16 original and 10 V2 Arduino sketches.
 
@@ -44,7 +44,7 @@ Download the artifact zip from the workflow run, extract it, then run `flash.sh`
 
 Generated archives are workflow artifacts only. Do not commit generated files from `release-artifacts/`, `releases/dist/`, or `releases/downloads/`.
 
-Checked-in files under `Firmware/` are factory or recovery binaries. They are documented assets, not source-build outputs, and they do not trigger source-build packaging.
+Checked-in files under `Firmware/` are factory or recovery binaries. They are documented assets, not source-build outputs, and they do not trigger source-build packaging. The lightweight policy job checks each tracked factory binary against the repository-relative path, byte size, and SHA-256 identity in `firmware_integrity.json`; on pull requests and branch pushes it also compares the binaries with the trusted base commit. It fails on missing, modified, unsafe, or unlisted tracked `.bin` files without rebuilding or repackaging them.
 
 ## Hardware Validation Boundary
 
@@ -63,9 +63,10 @@ python scripts/discover_examples.py --surface arduino --selector all
 python scripts/discover_examples.py --surface arduino --selector 08_LVGL_Animation
 python -B -m unittest discover -s tests -v
 python -B scripts/check_repository_policy.py --config repository_policy.json
+python -B scripts/check_firmware_integrity.py --manifest firmware_integrity.json
 ```
 
-The last two commands are the exact non-build checks for the repository policy and its tests. Product builds are a separate local or GitHub Actions responsibility; these checks do not compile examples or validate hardware.
+The last three commands are the exact non-build checks for the repository policy, immutable firmware identities, and their tests. Product builds are a separate local or GitHub Actions responsibility; these checks do not compile examples or validate hardware.
 
 The packaging helper expects an existing ESP-IDF or Arduino build output and is normally exercised inside CI after the framework build finishes.
 

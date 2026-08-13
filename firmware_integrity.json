@@ -1,0 +1,14 @@
+{
+  "firmware": [
+    {
+      "path": "Firmware/ESP32-S3-Touch-AMOLED-1.8-FactoryXiaozhi_250805.bin",
+      "size": 16732160,
+      "sha256": "033ba27f0d1824835e90fe6b41d2db8c1f13cda7e1d80c82b3f7537dafb8dc8d"
+    },
+    {
+      "path": "Firmware/ESP32-S3-Touch-AMOLED-1.8-V2-FactoryXiaozhi_260601.bin",
+      "size": 16777216,
+      "sha256": "6f188fb9d35ee793a3423934a4fa4e7c1fef9cc9dae76f9f177dabe854a6cdb3"
+    }
+  ]
+}

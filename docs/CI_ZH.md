@@ -14,7 +14,7 @@
 
 `workflow_dispatch` 接受 `all`、示例目录名或仓库相对示例路径。维护者可运行完整矩阵或单个示例。
 
-仓库策略作业在拉取请求中始终可见。其路由契约为失败关闭：不可用或不完整的差异数据是错误，而不是回退构建或通过。仅文档变更（包括 `Firmware/` 文档或不可变二进制文件）会被报告但默认不构建示例；`Firmware/` 不属于示例矩阵。可用的拉取请求或分支差异仅构建受影响的第一方示例。捆绑库变更会重建同一 Arduino 根目录的全部第一方草图。工作流、发现、策略、路由或发布打包变更运行相关框架的完整表面；共享 ESP-IDF 配置变更重建 ESP-IDF 表面。标签推送和手动 `all` 运行构建完整矩阵。
+仓库策略作业在拉取请求中始终可见。其路由契约为失败关闭：不可用或不完整的差异数据是错误，而不是回退构建或通过。独立的 `change-scope` 作业会消费并发布“仅文档”“固件”“不可变工件复核”和“未知路径”分类输出。仅文档变更不选择示例构建。`Firmware/` 下的每种文件都会单独报告且始终不进入示例矩阵；二进制或归档路径还会产生明确的发布复核警告。可用的拉取请求或分支差异仅构建受影响的第一方示例。捆绑库变更会重建同一 Arduino 根目录的全部第一方草图。工作流、发现、策略、路由或发布打包变更运行相关框架的完整表面；共享 ESP-IDF 配置变更重建 ESP-IDF 表面。标签推送和手动 `all` 运行构建完整矩阵。
 
 手动运行可通过 `target` 指定示例名、父目录（如 `08_LVGL_Animation`）或仓库相对路径。
 
@@ -25,7 +25,7 @@
 - ESP-IDF `v5.5.5` 和 `v6.0.2`，目标 `esp32s3`。
 - Arduino-ESP32 core `3.3.11`，FQBN `esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB`，使用对应 `examples/arduino/libraries` 或 `examples/arduino-v2/libraries` 目录中的捆绑库。
 
-这些框架版本已于 2026-08-10 从官方稳定版发布重新核实：ESP-IDF `v5.5.5`、`v6.0.2` 与 Arduino-ESP32 `3.3.11`。ESP-IDF 覆盖保留 v5.5 到 v6.0 的迁移背景，不使用 beta、release-candidate、preview 或 nightly 标签。完整矩阵包含 60 个固件构建作业：17 个 ESP-IDF 示例分别针对两个 ESP-IDF 版本，加上 16 个原版和 10 个 V2 Arduino 草图。
+这些框架版本已于 2026-08-13 从官方稳定版发布重新核实：ESP-IDF `v5.5.5`、`v6.0.2` 与 Arduino-ESP32 `3.3.11`。ESP-IDF 覆盖保留 v5.5 到 v6.0 的迁移背景，不使用 beta、release-candidate、preview 或 nightly 标签。完整矩阵包含 60 个固件构建作业：17 个 ESP-IDF 示例分别针对两个 ESP-IDF 版本，加上 16 个原版和 10 个 V2 Arduino 草图。
 
 ## 固件工件
 
@@ -38,7 +38,7 @@
 - 带 esptool 命令参数的 `flash_args.txt`
 - `bin/` 下由清单引用的固件二进制文件
 
-从工作流运行下载工件 zip，解压后使用开发板串口运行 `flash.sh` 或 `flash.bat`。CI zip 名称包含框架、示例、框架版本、目标和短提交标识；外层 GitHub 工件名称保持稳定，便于筛选和脚本下载。生成归档仅是工作流工件，不要提交 `release-artifacts/`、`releases/dist/` 或 `releases/downloads/` 中生成的文件。`Firmware/` 下检入的是工厂或恢复二进制文件，是文档化资产而非源码构建输出，也不会触发源码构建打包。
+从工作流运行下载工件 zip，解压后使用开发板串口运行 `flash.sh` 或 `flash.bat`。CI zip 名称包含框架、示例、框架版本、目标和短提交标识；外层 GitHub 工件名称保持稳定，便于筛选和脚本下载。生成归档仅是工作流工件，不要提交 `release-artifacts/`、`releases/dist/` 或 `releases/downloads/` 中生成的文件。`Firmware/` 下检入的是工厂或恢复二进制文件，是文档化资产而非源码构建输出，也不会触发源码构建打包。轻量策略作业根据 `firmware_integrity.json` 中的仓库相对路径、字节大小和 SHA-256 身份核验每个已跟踪工厂二进制；在拉取请求和分支推送中，它还会把二进制与可信基线提交比较。对于缺失、被修改、不安全或未列入清单的已跟踪 `.bin` 文件，它会失败且不会重建或重新打包固件。
 
 ## 硬件验证边界
 
@@ -55,6 +55,7 @@ python scripts/discover_examples.py --surface arduino --selector all
 python scripts/discover_examples.py --surface arduino --selector 08_LVGL_Animation
 python -B -m unittest discover -s tests -v
 python -B scripts/check_repository_policy.py --config repository_policy.json
+python -B scripts/check_firmware_integrity.py --manifest firmware_integrity.json
 ```
 
-最后两条是仓库策略及其测试的精确非构建检查；产品构建是独立的本地或 GitHub Actions 责任，这些检查不编译示例或验证硬件。打包辅助工具需要现有 ESP-IDF 或 Arduino 构建输出，通常在框架构建完成后由 CI 运行。如示例需要硬件、凭据或尚不兼容所选框架版本的上游组件，请在此记录排除原因后再将其排除出 CI。
+最后三条是仓库策略、不可变固件身份及其测试的精确非构建检查；产品构建是独立的本地或 GitHub Actions 责任，这些检查不编译示例或验证硬件。打包辅助工具需要现有 ESP-IDF 或 Arduino 构建输出，通常在框架构建完成后由 CI 运行。如示例需要硬件、凭据或尚不兼容所选框架版本的上游组件，请在此记录排除原因后再将其排除出 CI。
