@@ -17,6 +17,7 @@ ARDUINO_ROOTS = (Path("examples/arduino"), Path("examples/arduino-v2"))
 DOC_SUFFIXES = {".md", ".markdown", ".rst"}
 ARCHIVE_SUFFIXES = {".bin", ".zip", ".7z", ".tar", ".gz", ".xz"}
 GLOBAL_PREFIXES = (".github/workflows/", "tests/", "scripts/", "releases/", "repository_policy.json")
+FIRMWARE_POLICY_PATHS = {"firmware_integrity.json"}
 
 
 class DiffUnavailable(RuntimeError):
@@ -136,6 +137,10 @@ def classify_paths(paths: list[str], surface: str, examples: list[dict[str, str]
         lower = changed.lower()
         if not changed:
             continue
+        if lower in FIRMWARE_POLICY_PATHS:
+            firmware_paths.append(changed)
+            release_review_paths.append(changed)
+            continue
         if lower == "firmware" or lower.startswith("firmware/"):
             firmware_paths.append(changed)
             if Path(lower).suffix in ARCHIVE_SUFFIXES:
@@ -169,7 +174,8 @@ def classify_paths(paths: list[str], surface: str, examples: list[dict[str, str]
         selected = [example for example in examples if example["path"] in selected_paths]
     route = "all" if len(selected) == len(examples) and selected else "selected" if selected else "none"
     return selected, {"route": route, "docs_only": bool(paths) and non_docs == 0 and not firmware_paths,
-                      "firmware": bool(firmware_paths), "release_review": bool(release_review_paths),
+                      "firmware": bool(firmware_paths), "firmware_paths": firmware_paths,
+                      "release_review": bool(release_review_paths), "release_paths": release_review_paths,
                       "unknown_paths": unknown, "changed_paths": paths}
 
 
@@ -213,8 +219,9 @@ def main() -> int:
         if args.mode == "all" or selector:
             selected = [example for example in examples if matches_selector(example, selector)]
             evidence = {"route": "all" if len(selected) == len(examples) else "selected" if selected else "none",
-                        "docs_only": False, "firmware": False, "release_review": False,
-                        "unknown_paths": [], "changed_paths": []}
+                        "docs_only": False, "firmware": False, "firmware_paths": [],
+                        "release_review": False, "release_paths": [], "unknown_paths": [],
+                        "changed_paths": []}
         else:
             paths = parse_changed_file_input(Path(args.changed_files_from)) if args.changed_files_from else git_changed_paths(args.base_ref, args.head_ref)
             selected, evidence = classify_paths(paths, args.surface, examples)

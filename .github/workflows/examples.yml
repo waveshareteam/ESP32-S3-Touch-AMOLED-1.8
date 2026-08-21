@@ -27,10 +27,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - name: Test routing and packaging policy helpers
         run: python3 -B -m unittest discover -s tests -v
       - name: Check limited first-party documentation policy
         run: python3 -B scripts/check_repository_policy.py --config repository_policy.json
+      - name: Verify immutable factory firmware identities
+        env:
+          FIRMWARE_BASE_REF: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || (github.event_name == 'push' && github.ref_type == 'branch' && github.event.before) || '' }}
+        run: |
+          arguments=()
+          if [[ -n "$FIRMWARE_BASE_REF" ]]; then
+            arguments+=(--base-ref "$FIRMWARE_BASE_REF")
+          fi
+          python3 -B scripts/check_firmware_integrity.py --manifest firmware_integrity.json "${arguments[@]}"
 
   discover-esp-idf:
     needs: repository-policy
@@ -43,6 +54,8 @@ jobs:
       firmware: ${{ steps.discover.outputs.firmware }}
       release_review: ${{ steps.discover.outputs.release_review }}
       unknown_paths: ${{ steps.discover.outputs.unknown_paths }}
+      firmware_paths: ${{ steps.discover.outputs.firmware_paths }}
+      release_paths: ${{ steps.discover.outputs.release_paths }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -61,8 +74,67 @@ jobs:
             --idf-versions v5.5.5,v6.0.2 \
             --github-output "$GITHUB_OUTPUT"
 
+  change-scope:
+    needs: [discover-esp-idf, discover-arduino]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require both classifiers
+        if: needs.discover-esp-idf.result != 'success' || needs.discover-arduino.result != 'success'
+        run: |
+          echo "A complete change classification is required." >&2
+          exit 1
+      - name: Publish change scope
+        if: needs.discover-esp-idf.result == 'success' && needs.discover-arduino.result == 'success'
+        env:
+          DOCS_ONLY: ${{ needs.discover-esp-idf.outputs.docs_only }}
+          FIRMWARE: ${{ needs.discover-esp-idf.outputs.firmware }}
+          RELEASE_REVIEW: ${{ needs.discover-esp-idf.outputs.release_review }}
+          FIRMWARE_PATHS: ${{ needs.discover-esp-idf.outputs.firmware_paths }}
+          RELEASE_PATHS: ${{ needs.discover-esp-idf.outputs.release_paths }}
+          UNKNOWN_PATHS: ${{ needs.discover-esp-idf.outputs.unknown_paths }}
+          ESP_IDF_ROUTE: ${{ needs.discover-esp-idf.outputs.route }}
+          ARDUINO_ROUTE: ${{ needs.discover-arduino.outputs.route }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+
+          def paths(name):
+              value = json.loads(os.environ[name] or "[]")
+              if not isinstance(value, list) or any(not isinstance(item, str) for item in value):
+                  raise SystemExit(f"invalid classifier output: {name}")
+              return value
+
+          firmware_paths = paths("FIRMWARE_PATHS")
+          release_paths = paths("RELEASE_PATHS")
+          unknown_paths = paths("UNKNOWN_PATHS")
+          rows = [
+              "## Change scope",
+              "",
+              f"- Documentation only: `{os.environ['DOCS_ONLY']}`",
+              f"- Firmware surface: `{os.environ['FIRMWARE']}`",
+              f"- Immutable artifact review: `{os.environ['RELEASE_REVIEW']}`",
+              f"- ESP-IDF route: `{os.environ['ESP_IDF_ROUTE']}`",
+              f"- Arduino route: `{os.environ['ARDUINO_ROUTE']}`",
+              f"- Firmware paths: `{json.dumps(firmware_paths, separators=(',', ':'))}`",
+              f"- Release-review paths: `{json.dumps(release_paths, separators=(',', ':'))}`",
+              f"- Unknown paths: `{json.dumps(unknown_paths, separators=(',', ':'))}`",
+          ]
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as summary:
+              summary.write("\n".join(rows) + "\n")
+          if os.environ["DOCS_ONLY"] == "true":
+              print("::notice::Documentation-only change; example builds are skipped by design.")
+          if firmware_paths:
+              print("::notice::Firmware paths are reported separately and remain outside example CI.")
+          if release_paths:
+              print("::warning::Immutable firmware or release metadata changed; maintainer release review is required.")
+          if unknown_paths:
+              print("::warning::Unknown non-document paths conservatively select all example builds.")
+          PY
+
   build-esp-idf:
-    needs: discover-esp-idf
+    needs: [discover-esp-idf, change-scope]
     if: needs.discover-esp-idf.outputs.route != 'none'
     runs-on: ubuntu-latest
     container: espressif/idf:${{ matrix.idf }}
@@ -73,21 +145,30 @@ jobs:
       - uses: actions/checkout@v7
       - name: Build ${{ matrix.path }} with ESP-IDF ${{ matrix.idf }}
         shell: bash
+        env:
+          PROJECT_PATH: ${{ matrix.path }}
+          BUILD_PATH: build/${{ matrix.name }}-${{ matrix.idf }}
         run: |
           . "$IDF_PATH/export.sh"
           idf.py --version
-          idf.py -C "${{ matrix.path }}" -B "build/${{ matrix.name }}-${{ matrix.idf }}" set-target esp32s3 build
+          idf.py -C "$PROJECT_PATH" -B "$BUILD_PATH" set-target esp32s3 build
       - name: Package firmware
         shell: bash
+        env:
+          PROJECT_PATH: ${{ matrix.path }}
+          BUILD_PATH: build/${{ matrix.name }}-${{ matrix.idf }}
+          PACKAGE_NAME: ESP32-S3-Touch-AMOLED-1.8-${{ matrix.name }}-esp-idf-${{ matrix.idf }}-esp32s3
+          FRAMEWORK_VERSION: ${{ matrix.idf }}
+          COMMIT_SHA: ${{ github.sha }}
         run: |
           python3 releases/package_firmware.py \
             --framework esp-idf \
-            --project "${{ matrix.path }}" \
-            --build-dir "build/${{ matrix.name }}-${{ matrix.idf }}" \
-            --name "ESP32-S3-Touch-AMOLED-1.8-${{ matrix.name }}-esp-idf-${{ matrix.idf }}-esp32s3" \
-            --framework-version "${{ matrix.idf }}" \
+            --project "$PROJECT_PATH" \
+            --build-dir "$BUILD_PATH" \
+            --name "$PACKAGE_NAME" \
+            --framework-version "$FRAMEWORK_VERSION" \
             --target esp32s3 \
-            --git-sha "${{ github.sha }}" \
+            --git-sha "$COMMIT_SHA" \
             --output-dir release-artifacts
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v7
@@ -107,6 +188,8 @@ jobs:
       firmware: ${{ steps.discover.outputs.firmware }}
       release_review: ${{ steps.discover.outputs.release_review }}
       unknown_paths: ${{ steps.discover.outputs.unknown_paths }}
+      firmware_paths: ${{ steps.discover.outputs.firmware_paths }}
+      release_paths: ${{ steps.discover.outputs.release_paths }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -127,7 +210,7 @@ jobs:
             --github-output "$GITHUB_OUTPUT"
 
   build-arduino:
-    needs: discover-arduino
+    needs: [discover-arduino, change-scope]
     if: needs.discover-arduino.outputs.route != 'none'
     runs-on: ubuntu-latest
     strategy:
@@ -137,29 +220,42 @@ jobs:
       - uses: actions/checkout@v7
       - uses: arduino/setup-arduino-cli@v2
       - name: Install ESP32 Arduino core
+        env:
+          ARDUINO_CORE: ${{ matrix.core }}
         run: |
           arduino-cli config init --overwrite
           arduino-cli config add board_manager.additional_urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
           arduino-cli core update-index
-          arduino-cli core install esp32:esp32@${{ matrix.core }}
+          arduino-cli core install "esp32:esp32@$ARDUINO_CORE"
       - name: Compile ${{ matrix.path }}
+        env:
+          FQBN: ${{ matrix.fqbn }}
+          LIBRARIES: ${{ matrix.libraries }}
+          BUILD_PATH: build/${{ matrix.name }}-${{ matrix.core }}
+          PROJECT_PATH: ${{ matrix.path }}
         run: |
           arduino-cli compile \
-            --fqbn "${{ matrix.fqbn }}" \
-            --libraries "${{ matrix.libraries }}" \
+            --fqbn "$FQBN" \
+            --libraries "$LIBRARIES" \
             --export-binaries \
-            --output-dir "build/${{ matrix.name }}-${{ matrix.core }}" \
-            "${{ matrix.path }}"
+            --output-dir "$BUILD_PATH" \
+            "$PROJECT_PATH"
       - name: Package firmware
+        env:
+          PROJECT_PATH: ${{ matrix.path }}
+          BUILD_PATH: build/${{ matrix.name }}-${{ matrix.core }}
+          PACKAGE_NAME: ESP32-S3-Touch-AMOLED-1.8-${{ matrix.name }}-arduino-${{ matrix.core }}-esp32s3
+          FRAMEWORK_VERSION: ${{ matrix.core }}
+          COMMIT_SHA: ${{ github.sha }}
         run: |
           python3 releases/package_firmware.py \
             --framework arduino \
-            --project "${{ matrix.path }}" \
-            --build-dir "build/${{ matrix.name }}-${{ matrix.core }}" \
-            --name "ESP32-S3-Touch-AMOLED-1.8-${{ matrix.name }}-arduino-${{ matrix.core }}-esp32s3" \
-            --framework-version "${{ matrix.core }}" \
+            --project "$PROJECT_PATH" \
+            --build-dir "$BUILD_PATH" \
+            --name "$PACKAGE_NAME" \
+            --framework-version "$FRAMEWORK_VERSION" \
             --target esp32s3 \
-            --git-sha "${{ github.sha }}" \
+            --git-sha "$COMMIT_SHA" \
             --output-dir release-artifacts
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v7
