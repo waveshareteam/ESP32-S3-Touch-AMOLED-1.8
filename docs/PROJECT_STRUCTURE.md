@@ -20,7 +20,7 @@ The repository keeps hardware assets, examples, and CI support separate so users
 | `examples/arduino/` | Original Arduino sketches and bundled libraries |
 | `examples/arduino-v2/` | V2 Arduino sketches and bundled libraries |
 | `config/` | Shared ESP-IDF configuration overlays and CI-facing defaults |
-| `Firmware/` | Factory firmware binaries and notes; excluded from source-build CI |
+| `firmware/` | Default-firmware source and original/V2 combined images; separate from example CI |
 | `releases/` | Firmware packaging scripts and release notes |
 | `CONTRIBUTING.md` | Contribution, example, and documentation guidelines |
 | `CODE_OF_CONDUCT.md` | Community participation expectations |

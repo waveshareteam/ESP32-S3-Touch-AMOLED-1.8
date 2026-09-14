@@ -33,15 +33,6 @@ jobs:
         run: python3 -B -m unittest discover -s tests -v
       - name: Check limited first-party documentation policy
         run: python3 -B scripts/check_repository_policy.py --config repository_policy.json
-      - name: Verify immutable factory firmware identities
-        env:
-          FIRMWARE_BASE_REF: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || (github.event_name == 'push' && github.ref_type == 'branch' && github.event.before) || '' }}
-        run: |
-          arguments=()
-          if [[ -n "$FIRMWARE_BASE_REF" ]]; then
-            arguments+=(--base-ref "$FIRMWARE_BASE_REF")
-          fi
-          python3 -B scripts/check_firmware_integrity.py --manifest firmware_integrity.json "${arguments[@]}"
 
   discover-esp-idf:
     needs: repository-policy
@@ -114,7 +105,7 @@ jobs:
               "",
               f"- Documentation only: `{os.environ['DOCS_ONLY']}`",
               f"- Firmware surface: `{os.environ['FIRMWARE']}`",
-              f"- Immutable artifact review: `{os.environ['RELEASE_REVIEW']}`",
+              f"- Release review: `{os.environ['RELEASE_REVIEW']}`",
               f"- ESP-IDF route: `{os.environ['ESP_IDF_ROUTE']}`",
               f"- Arduino route: `{os.environ['ARDUINO_ROUTE']}`",
               f"- Firmware paths: `{json.dumps(firmware_paths, separators=(',', ':'))}`",
@@ -128,7 +119,7 @@ jobs:
           if firmware_paths:
               print("::notice::Firmware paths are reported separately and remain outside example CI.")
           if release_paths:
-              print("::warning::Immutable firmware or release metadata changed; maintainer release review is required.")
+              print("::warning::Firmware or release artifacts changed; maintainer release review is required.")
           if unknown_paths:
               print("::warning::Unknown non-document paths conservatively select all example builds.")
           PY

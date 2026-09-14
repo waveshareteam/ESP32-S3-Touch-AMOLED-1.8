@@ -70,4 +70,4 @@ python3 releases/download_artifacts.py --clean
 
 生成的归档、下载的工作流工件和构建目录均被 git 忽略。请勿提交生成的 zip 文件、解压的固件文件夹或本地构建输出。
 
-`Firmware/` 下的工厂二进制文件是独立恢复资产，不会重新打包为 CI 构建输出。它们对应的源码和构建说明尚未包含在本仓库中，可能在后续更新中提供。
+`firmware/` 下的 ESP-Brookesia Phone 源码及 Original/V2 合并镜像与这些 CI 示例归档分开维护。请按 `firmware/brookesia/README_ZH.md` 中的命令构建和合并。

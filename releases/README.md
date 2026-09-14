@@ -70,4 +70,4 @@ Use `--artifact <name>` to download one firmware package, or `--pattern "firmwar
 
 Generated archives, downloaded workflow artifacts, and build directories are ignored by git. Do not commit generated zip files, extracted firmware folders, or local build outputs.
 
-Factory binaries under `Firmware/` are separate recovery assets. They are documented but not repackaged as CI build outputs. Their corresponding source and build instructions are not included in this repository yet and may be added in a later update.
+ESP-Brookesia Phone source and Original/V2 combined images under `firmware/` are maintained separately from these CI example archives. Build and merge them with the commands documented in `firmware/brookesia/README.md`.

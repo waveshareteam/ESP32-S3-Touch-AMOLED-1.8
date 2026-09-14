@@ -1,0 +1,7 @@
+# Build products are profile-local and are not source deliverables.
+original/build/
+v2/build/
+original/sdkconfig
+v2/sdkconfig
+original/dependencies.lock
+v2/dependencies.lock

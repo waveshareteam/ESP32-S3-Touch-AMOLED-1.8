@@ -1,0 +1,13 @@
+dependencies:
+  idf:
+    version: '>=5.5'
+
+  chmorgan/esp-audio-player:
+    version: "1.1.0"
+    public: true
+
+  chmorgan/esp-file-iterator:
+    version: "1.0.0"
+    public: true
+
+version: 0.0.2

@@ -90,10 +90,10 @@ Each package contains `manifest.json`, `flash_args.txt`, platform-specific
 flash helpers, and the required binaries under `bin/`. Install esptool with
 `python -m pip install esptool` when needed.
 
-Factory and recovery images under [Firmware](Firmware/) are checked-in product
-assets, not CI build outputs. See
+The default-firmware source and original/V2 combined images live under
+[firmware](firmware/) and are maintained separately from CI example artifacts. See
 [Firmware Artifacts](docs/FIRMWARE.md) and [Release Tools](releases/README.md)
-for the source-built and factory firmware boundaries.
+for the build and artifact boundaries.
 
 ## 🧪 Examples
 
@@ -174,7 +174,7 @@ board options, artifact behavior, and hardware validation boundaries.
 | [`examples/esp-idf/`](examples/esp-idf/) | First-party ESP-IDF projects |
 | [`examples/arduino/`](examples/arduino/) | Original Arduino sketches and bundled libraries |
 | [`examples/arduino-v2/`](examples/arduino-v2/) | V2 Arduino sketches and bundled libraries |
-| [`Firmware/`](Firmware/) | Factory flashing and recovery binaries |
+| [`firmware/`](firmware/) | Default-firmware source and original/V2 combined images |
 | [`releases/`](releases/) | Firmware packaging and artifact download tools |
 | [`config/`](config/) | Shared ESP-IDF configuration notes and overlays |
 | [`docs/`](docs/) | Setup, examples, CI, structure, and firmware documentation |

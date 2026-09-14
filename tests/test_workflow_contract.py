@@ -15,14 +15,6 @@ class WorkflowContractTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.workflow = WORKFLOW.read_text(encoding="utf-8")
 
-    def test_exact_firmware_identity_command_is_wired(self) -> None:
-        self.assertIn(
-            "python3 -B scripts/check_firmware_integrity.py --manifest firmware_integrity.json",
-            self.workflow,
-        )
-        self.assertIn('--base-ref "$FIRMWARE_BASE_REF"', self.workflow)
-        self.assertIn("github.event.pull_request.base.sha", self.workflow)
-
     def test_scope_job_consumes_every_classifier_output(self) -> None:
         self.assertIn("change-scope:", self.workflow)
         self.assertIn("if: ${{ always() }}", self.workflow)

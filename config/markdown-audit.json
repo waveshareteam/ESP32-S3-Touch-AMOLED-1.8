@@ -1,5 +1,11 @@
 {
-  "classification_rules": [],
+  "classification_rules": [{
+    "category": "first_party_maintainer",
+    "patterns": [
+      "firmware/brookesia/components/README.md",
+      "firmware/brookesia/components/README_ZH.md"
+    ]
+  }],
   "exclude_patterns": [],
   "pair_exempt_patterns": ["README_CN.md"],
   "language_link_exempt_patterns": ["README_CN.md"],
