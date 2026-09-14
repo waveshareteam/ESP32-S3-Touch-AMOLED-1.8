@@ -4,24 +4,16 @@
 
 This repository has two different firmware artifact types.
 
-## Factory Binaries
+## Default Firmware
 
-`Firmware/` contains prebuilt factory or recovery images supplied with the product. These binaries are checked in intentionally so users can recover or restore a board without requiring a source build. Their corresponding source and build instructions are not included in this repository yet and may be added in a later update.
+[`firmware/brookesia/`](../firmware/brookesia/) contains the source for the board's default ESP-Brookesia Phone firmware. Separate Original and V2 project wrappers select the display and touch implementation supplied by the matching published BSP line while sharing the Phone application and board-specific applications.
 
-Factory binaries are not source projects:
+The checked-in combined images are generated from each final ESP-IDF build's own `flash_args` and include the bootloader, partition table, OTA data, speech models, application, and SPIFFS image:
 
-- They are not rebuilt by GitHub Actions.
-- They are not repackaged as CI artifacts.
-- They should not be treated as generated output from this repository.
+- `firmware/ESP32-S3-Touch-AMOLED-1.8-FactoryOnly-260824.bin`
+- `firmware/ESP32-S3-Touch-AMOLED-1.8-V2-FactoryOnly-260824.bin`
 
-### Read-only identity records
-
-The following SHA-256 values identify the checked-in factory binaries as they are supplied. They are read-only identity records, not reproducible-build claims.
-
-- `Firmware/ESP32-S3-Touch-AMOLED-1.8-FactoryXiaozhi_250805.bin`: `033BA27F0D1824835E90FE6B41D2DB8C1F13CDA7E1D80C82B3F7537DAFB8DC8D`
-- `Firmware/ESP32-S3-Touch-AMOLED-1.8-V2-FactoryXiaozhi_260601.bin`: `6F188FB9D35EE793A3423934A4FA4E7C1FEF9CC9DAE76F9F177DABE854A6CDB3`
-
-Keep factory-binary documentation focused on the board revision, intended use, and flashing or recovery notes.
+See the [default-firmware build instructions](../firmware/brookesia/README.md) for the exact profile, build, and merge commands. These source projects and whole-flash images are maintained separately from the example CI packaging described below.
 
 ## Source-Built CI Artifacts
 

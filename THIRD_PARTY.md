@@ -20,9 +20,9 @@ The Arduino example trees include bundled libraries such as LVGL, Adafruit BusIO
 
 The `examples/esp-idf/90_axp2101_pmu` diagnostic includes a local XPowersLib port for low-level PMU bring-up. XPowersLib files retain their upstream MIT license notices.
 
-## Firmware Binaries
+## Default Firmware
 
-Files under `Firmware/` are prebuilt factory firmware images for this board. See [Firmware/README.txt](Firmware/README.txt) for usage notes.
+The ESP-Brookesia Phone source and generated Original/V2 combined images under `firmware/` use the dependencies documented in [firmware/brookesia/README.md](firmware/brookesia/README.md). Review the resolved managed-component licenses before redistributing a binary.
 
 ## License Summary
 

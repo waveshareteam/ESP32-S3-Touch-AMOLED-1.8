@@ -64,7 +64,7 @@ Windows：
 flash.bat COMx
 ```
 
-每个包包含 `manifest.json`、`flash_args.txt`、平台刷写脚本和 `bin/` 下所需二进制文件；需要时使用 `python -m pip install esptool`。`Firmware/` 下的工厂与恢复镜像是仓库产品资产，并非 CI 构建输出；请参见[固件工件](docs/FIRMWARE_ZH.md)和[发布工具](releases/README_ZH.md)。
+每个包包含 `manifest.json`、`flash_args.txt`、平台刷写脚本和 `bin/` 下所需二进制文件；需要时使用 `python -m pip install esptool`。默认固件源码及原版/V2 合并镜像位于 [`firmware/`](firmware/)，与 CI 示例工件分开维护；请参见[固件工件](docs/FIRMWARE_ZH.md)和[发布工具](releases/README_ZH.md)。
 
 ## 🧪 示例
 
@@ -121,7 +121,7 @@ Arduino 示例分为两套第一方集合，并携带各自匹配的捆绑库：
 | [`examples/esp-idf/`](examples/esp-idf/) | 第一方 ESP-IDF 工程 |
 | [`examples/arduino/`](examples/arduino/) | 原版 Arduino 草图和捆绑库 |
 | [`examples/arduino-v2/`](examples/arduino-v2/) | V2 Arduino 草图和捆绑库 |
-| [`Firmware/`](Firmware/) | 工厂刷写和恢复二进制文件 |
+| [`firmware/`](firmware/) | 默认固件源码及原版/V2 合并镜像 |
 | [`releases/`](releases/) | 固件打包和工件下载工具 |
 | [`config/`](config/) | 共享 ESP-IDF 配置说明和覆盖层 |
 | [`docs/`](docs/) | 设置、示例、CI、结构和固件文档 |

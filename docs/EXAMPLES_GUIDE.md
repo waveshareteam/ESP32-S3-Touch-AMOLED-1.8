@@ -44,7 +44,7 @@ The ESP Component Registry lists `2.0.3` as the latest `waveshare/esp32_s3_touch
 
 ## CI Coverage
 
-The `Build Examples` workflow builds first-party ESP-IDF examples with ESP-IDF v5.5.5 and v6.0.2 and first-party Arduino sketches with Arduino-ESP32 core 3.3.11. Those stable versions were reverified from official releases on 2026-08-10; the ESP-IDF coverage retains the v5.5-to-v6.0 migration context and includes no prereleases. Pull request and supported-branch push runs build change-affected examples; tag runs and manual runs with `target=all` build the full matrix. Successful source builds upload flashable firmware archives; checked-in factory binaries are excluded from source-build packaging. See [CI.md](CI.md), [FIRMWARE.md](FIRMWARE.md), and [../releases/README.md](../releases/README.md) for details.
+The `Build Examples` workflow builds first-party ESP-IDF examples with ESP-IDF v5.5.5 and v6.0.2 and first-party Arduino sketches with Arduino-ESP32 core 3.3.11. Those stable versions were reverified from official releases on 2026-08-10; the ESP-IDF coverage retains the v5.5-to-v6.0 migration context and includes no prereleases. Pull request and supported-branch push runs build change-affected examples; tag runs and manual runs with `target=all` build the full matrix. Successful source builds upload flashable firmware archives; the default-firmware source and combined images under `firmware/` are maintained separately. See [CI.md](CI.md), [FIRMWARE.md](FIRMWARE.md), and [../releases/README.md](../releases/README.md) for details.
 
 ## Customer-Facing Checklist
 

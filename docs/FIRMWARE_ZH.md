@@ -4,24 +4,16 @@
 
 本仓库有两类不同的固件工件。
 
-## 工厂二进制文件
+## 默认固件
 
-`Firmware/` 包含随产品提供的预构建工厂或恢复镜像。这些二进制文件有意随仓库检入，使用户无需源码构建即可恢复或还原开发板。其对应源码和构建说明尚未包含在本仓库中，可能在后续更新中提供。
+[`firmware/brookesia/`](../firmware/brookesia/) 包含本开发板默认 ESP-Brookesia Phone 固件的源码。Original 与 V2 使用独立工程包装层选择对应已发布 BSP 的显示和触摸实现，并共享 Phone 应用与板级应用。
 
-工厂二进制文件不是源码工程：
+检入的合并镜像由各自最终 ESP-IDF 构建生成的 `flash_args` 制作，包含 bootloader、分区表、OTA 数据、语音模型、应用和 SPIFFS 镜像：
 
-- GitHub Actions 不会重新构建它们。
-- 不会将其重新打包为 CI 工件。
-- 不应视为本仓库生成的输出。
+- `firmware/ESP32-S3-Touch-AMOLED-1.8-FactoryOnly-260824.bin`
+- `firmware/ESP32-S3-Touch-AMOLED-1.8-V2-FactoryOnly-260824.bin`
 
-### 只读身份记录
-
-下列 SHA-256 值用于标识随仓库提供的工厂二进制文件。这些是只读身份记录，不是可复现构建声明。
-
-- `Firmware/ESP32-S3-Touch-AMOLED-1.8-FactoryXiaozhi_250805.bin`: `033BA27F0D1824835E90FE6B41D2DB8C1F13CDA7E1D80C82B3F7537DAFB8DC8D`
-- `Firmware/ESP32-S3-Touch-AMOLED-1.8-V2-FactoryXiaozhi_260601.bin`: `6F188FB9D35EE793A3423934A4FA4E7C1FEF9CC9DAE76F9F177DABE854A6CDB3`
-
-工厂二进制文件的文档应聚焦板卡修订、预期用途和刷写或恢复说明。
+精确的配置、构建和合并命令见[默认固件构建说明](../firmware/brookesia/README_ZH.md)。这些源码工程和整片镜像与下述示例 CI 打包流程分开维护。
 
 ## 源码构建的 CI 工件
 

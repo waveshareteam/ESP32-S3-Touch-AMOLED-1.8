@@ -18,9 +18,9 @@
 
 Arduino 示例树包含 LVGL、Adafruit BusIO、SensorLib、GFX Library for Arduino 和板级辅助库等捆绑库；它们在各自目录中保留上游许可证。`examples/esp-idf/90_axp2101_pmu` 诊断示例包含用于底层 PMU 启动的本地 XPowersLib 移植，XPowersLib 文件保留上游 MIT 许可证声明。
 
-## 固件二进制文件
+## 默认固件
 
-`Firmware/` 下的文件是本开发板的预构建工厂固件镜像。使用说明请参见 [Firmware/README.txt](Firmware/README.txt)。
+`firmware/` 下的 ESP-Brookesia Phone 源码和生成的 Original/V2 合并镜像使用 [firmware/brookesia/README_ZH.md](firmware/brookesia/README_ZH.md) 记录的依赖。重新分发二进制文件前，请复核解析到的托管组件许可证。
 
 ## 许可证摘要
 

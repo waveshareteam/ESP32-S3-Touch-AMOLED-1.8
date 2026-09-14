@@ -44,7 +44,7 @@ ESP Component Registry 在 2026-08-10 将 `2.0.3` 列为 `esp32s3` 的最新 `wa
 
 ## CI 覆盖
 
-`Build Examples` 工作流以 ESP-IDF v5.5.5、v6.0.2 构建第一方 ESP-IDF 示例，并以 Arduino-ESP32 core 3.3.11 构建第一方 Arduino 草图。这些稳定版本已于 2026-08-10 从官方发布重新核实；ESP-IDF 覆盖保留 v5.5 到 v6.0 的迁移背景且不含预发布版本。拉取请求和受支持分支上的推送会构建受变更影响的示例；标签推送和手动以 `target=all` 运行会构建完整矩阵。成功源码构建上传可刷写固件归档；检入的工厂二进制文件不进入源码构建打包。详情见 [CI_ZH.md](CI_ZH.md)、[FIRMWARE_ZH.md](FIRMWARE_ZH.md) 和 [../releases/README_ZH.md](../releases/README_ZH.md)。
+`Build Examples` 工作流以 ESP-IDF v5.5.5、v6.0.2 构建第一方 ESP-IDF 示例，并以 Arduino-ESP32 core 3.3.11 构建第一方 Arduino 草图。这些稳定版本已于 2026-08-10 从官方发布重新核实；ESP-IDF 覆盖保留 v5.5 到 v6.0 的迁移背景且不含预发布版本。拉取请求和受支持分支上的推送会构建受变更影响的示例；标签推送和手动以 `target=all` 运行会构建完整矩阵。成功源码构建上传可刷写固件归档；`firmware/` 下的默认固件源码和合并镜像单独维护。详情见 [CI_ZH.md](CI_ZH.md)、[FIRMWARE_ZH.md](FIRMWARE_ZH.md) 和 [../releases/README_ZH.md](../releases/README_ZH.md)。
 
 ## 面向客户的检查表
 

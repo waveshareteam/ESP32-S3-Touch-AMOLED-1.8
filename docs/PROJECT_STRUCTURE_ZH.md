@@ -20,7 +20,7 @@
 | `examples/arduino/` | 原版 Arduino 草图和捆绑库 |
 | `examples/arduino-v2/` | V2 Arduino 草图和捆绑库 |
 | `config/` | 共享 ESP-IDF 配置覆盖层和 CI 默认值 |
-| `Firmware/` | 工厂固件二进制文件和说明；不进入源码构建 CI |
+| `firmware/` | 默认固件源码及原版/V2 合并镜像；与示例 CI 分开维护 |
 | `releases/` | 固件打包脚本和发布说明 |
 | `CONTRIBUTING_ZH.md` | 贡献、示例和文档指南 |
 | `CODE_OF_CONDUCT_ZH.md` | 社区参与期望 |
