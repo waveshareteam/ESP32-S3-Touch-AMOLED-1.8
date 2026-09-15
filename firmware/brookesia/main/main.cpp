@@ -16,7 +16,6 @@
 #include "nvs_flash.h"
 
 #include "Clock.hpp"
-#include "Crosshair.hpp"
 #include "Drawpanel.hpp"
 #include "Gallery.hpp"
 #include "Gravitysphere.hpp"
@@ -44,6 +43,23 @@ using namespace esp_brookesia::gui;
 using namespace esp_brookesia::systems::phone;
 
 namespace {
+
+// esp_lvgl_port's own ESP_LVGL_PORT_INIT_CONFIG() default of 7168 bytes is sized
+// for the plain LVGL peripheral demos.  The Brookesia phone launcher resolves a
+// much deeper style/event chain while it builds and redraws the app grid, so the
+// LVGL worker task overruns that default and takes the system down with a
+// "***ERROR*** A stack overflow in task taskLVGL" panic.  Give it the same
+// headroom the other Waveshare Brookesia firmwares use, and keep the stack in
+// internal RAM as esp_lvgl_port does by default.
+#define LVGL_PORT_INIT_CONFIG()                                         \
+    {                                                                   \
+        .task_priority = 4,                                             \
+        .task_stack = 20 * 1024,                                        \
+        .task_affinity = -1,                                            \
+        .task_max_sleep_ms = 500,                                       \
+        .task_stack_caps = MALLOC_CAP_INTERNAL | MALLOC_CAP_DEFAULT,    \
+        .timer_period_ms = 5,                                           \
+    }
 
 esp_err_t init_nvs()
 {
@@ -150,7 +166,20 @@ extern "C" void app_main(void)
 {
     ESP_UTILS_LOGI("Starting ESP32-S3-Touch-AMOLED-1.8 Brookesia firmware");
 
-    lv_display_t *display = bsp_display_start();
+    // Start through the explicit configuration entry point so the LVGL worker
+    // task is created with the enlarged stack above.
+    //
+    // This BSP honors only lvgl_port_cfg here: bsp_display_lcd_init() builds its
+    // own lvgl_port_display_cfg_t from the BSP Kconfig, so buffer_size,
+    // double_buffer and flags are deliberately left out instead of pretending to
+    // configure them.  The draw buffer geometry therefore comes from
+    // CONFIG_BSP_DISPLAY_LVGL_BUF_HEIGHT (see sdkconfig.defaults), which must
+    // stay small enough that the internal DMA bounce buffer esp_lcd needs for a
+    // PSRAM draw buffer always fits (see the note in sdkconfig.defaults).
+    bsp_display_cfg_t display_config = {
+        .lvgl_port_cfg = LVGL_PORT_INIT_CONFIG(),
+    };
+    lv_display_t *display = bsp_display_start_with_config(&display_config);
     ESP_UTILS_CHECK_NULL_EXIT(display, "Start display failed");
     ESP_UTILS_CHECK_ERROR_EXIT(
         bsp_display_brightness_set(70), "Set initial display brightness failed"
@@ -176,6 +205,19 @@ extern "C" void app_main(void)
     bsp_display_unlock();
 
     ESP_UTILS_CHECK_ERROR_EXIT(init_nvs(), "Initialize NVS failed");
+
+    // Bring the Wi-Fi stack up here, while the internal heap is still one large
+    // unbroken block. esp_wifi_init() allocates its static RX pool as a single
+    // contiguous chunk of DMA-capable internal RAM; if the launcher and its
+    // applications have already fragmented that heap, the driver silently falls
+    // back to 2 RX buffers and Wi-Fi never starts (ESP_ERR_NO_MEM), which costs
+    // the status monitor and the Xiaozhi voice application.
+    const esp_err_t wifi_stack_result = brookesia::system_status::init_wifi_stack();
+    if (wifi_stack_result != ESP_OK) {
+        ESP_UTILS_LOGW(
+            "Early Wi-Fi stack initialization failed: %s", esp_err_to_name(wifi_stack_result)
+        );
+    }
 
     const esp_err_t rtc_result = rtc_service_init();
     if (rtc_result != ESP_OK) {
@@ -214,10 +256,6 @@ extern "C" void app_main(void)
             install_app(phone, apps::Drawpanel::requestInstance(), "Draw"), "Install Draw failed"
         );
         ESP_UTILS_CHECK_FALSE_EXIT(
-            install_app(phone, apps::Crosshair::requestInstance(), "Crosshair"),
-            "Install Crosshair failed"
-        );
-        ESP_UTILS_CHECK_FALSE_EXIT(
             install_app(phone, apps::Gravitysphere::requestInstance(), "Gravitysphere"),
             "Install Gravitysphere failed"
         );
@@ -240,8 +278,12 @@ extern "C" void app_main(void)
         ESP_UTILS_CHECK_FALSE_EXIT(
             install_app(phone, apps::Recorder::requestInstance(), "Recorder"), "Install Recorder failed"
         );
+        // Settings is an immersive full-screen page: it requests neither the
+        // status bar nor the navigation bar, so Brookesia sets the status bar
+        // visual mode to HIDE while the app is open.
         ESP_UTILS_CHECK_FALSE_EXIT(
-            install_app(phone, apps::Settings::requestInstance(), "Settings"), "Install Settings failed"
+            install_app(phone, apps::Settings::requestInstance(false, false), "Settings"),
+            "Install Settings failed"
         );
         ESP_UTILS_CHECK_FALSE_EXIT(
             install_app(phone, apps::XiaozhiApp::requestInstance(), "Xiaozhi"), "Install Xiaozhi failed"

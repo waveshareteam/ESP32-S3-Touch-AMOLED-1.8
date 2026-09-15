@@ -5,7 +5,6 @@ idf_component_register(
         brookesia_app_calculator
         bsp_extra
         Clock
-        Crosshair
         draw
         Gallery
         Gravitysphere
@@ -25,11 +24,6 @@ target_compile_options(${COMPONENT_LIB} PRIVATE -Wno-missing-field-initializers)
 
 set(STORAGE_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../spiffs")
 set(STORAGE_STAGING_DIR "${CMAKE_BINARY_DIR}/storage_spiffs")
-set(STORAGE_STAGING_STAMP "${CMAKE_BINARY_DIR}/storage_spiffs.stamp")
-
-file(GLOB_RECURSE STORAGE_SOURCE_FILES CONFIGURE_DEPENDS LIST_DIRECTORIES false
-    "${STORAGE_SOURCE_DIR}/*")
-list(SORT STORAGE_SOURCE_FILES)
 
 idf_build_get_property(build_components BUILD_COMPONENTS)
 set(XIAOZHI_FONTS_DIR "")
@@ -50,8 +44,11 @@ if(NOT EXISTS "${XIAOZHI_COMMON_FONT}")
     message(FATAL_ERROR "xiaozhi-fonts is missing font_puhui_common_30_4.bin")
 endif()
 
-add_custom_command(
-    OUTPUT "${STORAGE_STAGING_STAMP}"
+# Staging is intentionally unconditional. A stamp-gated copy can silently keep a
+# stale staging directory, which packages an out-of-date SPIFFS image with no
+# build error at all: bundled media then simply never appears on the device.
+# Copying a few megabytes on every build is the cheap price for that guarantee.
+add_custom_target(storage_spiffs_stage
     COMMAND "${CMAKE_COMMAND}" -E rm -rf "${STORAGE_STAGING_DIR}"
     COMMAND "${CMAKE_COMMAND}" -E make_directory "${STORAGE_STAGING_DIR}"
     COMMAND "${CMAKE_COMMAND}" -E copy_directory
@@ -59,12 +56,9 @@ add_custom_command(
     COMMAND "${CMAKE_COMMAND}" -E make_directory "${STORAGE_STAGING_DIR}/xiaozhi"
     COMMAND "${CMAKE_COMMAND}" -E copy_if_different
         "${XIAOZHI_COMMON_FONT}" "${STORAGE_STAGING_DIR}/xiaozhi/font.bin"
-    COMMAND "${CMAKE_COMMAND}" -E touch "${STORAGE_STAGING_STAMP}"
-    DEPENDS ${STORAGE_SOURCE_FILES} "${XIAOZHI_COMMON_FONT}"
     COMMENT "Staging Original-profile Brookesia SPIFFS resources"
     VERBATIM
 )
-add_custom_target(storage_spiffs_stage DEPENDS "${STORAGE_STAGING_STAMP}")
 
 spiffs_create_partition_image(
     storage "${STORAGE_STAGING_DIR}"

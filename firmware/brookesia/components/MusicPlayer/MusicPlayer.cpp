@@ -226,39 +226,39 @@ bool MusicPlayer::run(void)
     size_t track_count = 0;
     const char *music_path = nullptr;
 
-    /* Hold the lease for the complete lifetime of the iterator and the audio
-     * player's FILE handle. A lease prevents Settings from logically
-     * unmounting the card while playback is active. Physical removal can still
-     * happen on this board (there is no card-detect GPIO), so every open/play
-     * failure remains a recoverable UI error. */
-    esp_err_t result = storage_service_acquire(&_storage_lease);
-    if (result == ESP_OK) {
-        track_count = scan_music_directory(SD_MUSIC_DIR, "SD", &_file_iterator);
-        music_path = (track_count > 0) ? SD_MUSIC_DIR : nullptr;
+    /* The firmware image carries its own music library, so the always-mounted
+     * SPIFFS partition is the primary source, exactly as in the P4 reference
+     * firmware. The microSD card stays available as a fallback for user media. */
+    track_count = scan_music_directory(SPIFFS_MUSIC_DIR, "SPIFFS", &_file_iterator);
+    music_path = (track_count > 0) ? SPIFFS_MUSIC_DIR : nullptr;
 
-        if (track_count == 0) {
-            track_count = scan_music_directory(SD_MUSIC_DIR_COMPAT, "SD compatibility", &_file_iterator);
-            music_path = (track_count > 0) ? SD_MUSIC_DIR_COMPAT : nullptr;
-        }
+    if (track_count == 0) {
+        /* Hold the lease for the complete lifetime of the iterator and the audio
+         * player's FILE handle. A lease prevents Settings from logically
+         * unmounting the card while playback is active. Physical removal can still
+         * happen on this board (there is no card-detect GPIO), so every open/play
+         * failure remains a recoverable UI error. */
+        const esp_err_t result = storage_service_acquire(&_storage_lease);
+        if (result == ESP_OK) {
+            track_count = scan_music_directory(SD_MUSIC_DIR, "SD", &_file_iterator);
+            music_path = (track_count > 0) ? SD_MUSIC_DIR : nullptr;
 
-        if (track_count == 0) {
-            /* No SD-backed object survived the scans, so release before
-             * falling back to the always-mounted firmware filesystem. */
+            if (track_count == 0) {
+                track_count = scan_music_directory(SD_MUSIC_DIR_COMPAT, "SD compatibility", &_file_iterator);
+                music_path = (track_count > 0) ? SD_MUSIC_DIR_COMPAT : nullptr;
+            }
+
+            if (track_count == 0) {
+                storage_service_release(&_storage_lease);
+            }
+        } else {
+            ESP_LOGW(TAG, "SD music unavailable: %s", esp_err_to_name(result));
             storage_service_release(&_storage_lease);
         }
-    } else {
-        ESP_LOGW(TAG, "SD music unavailable, falling back to SPIFFS: %s",
-                 esp_err_to_name(result));
-        storage_service_release(&_storage_lease);
     }
 
     if (track_count == 0) {
-        track_count = scan_music_directory(SPIFFS_MUSIC_DIR, "SPIFFS", &_file_iterator);
-        music_path = (track_count > 0) ? SPIFFS_MUSIC_DIR : nullptr;
-    }
-
-    if (track_count == 0) {
-        ESP_LOGW(TAG, "No MP3/WAV tracks found on SD or SPIFFS");
+        ESP_LOGW(TAG, "No MP3/WAV tracks found on SPIFFS or SD");
         /* Keep the complete reference player visible even with an empty
          * firmware image. Passing NULL makes the already-guarded demo render
          * its cover/control/spectrum framework with playback disabled. */

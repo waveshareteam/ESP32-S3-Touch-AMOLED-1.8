@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <atomic>
 #include <cinttypes>
+#include <cstdlib>
 
 #include "bsp/esp-bsp.h"
 #include "driver/i2c_master.h"
@@ -16,11 +17,13 @@
 #include "esp_event.h"
 #include "esp_log.h"
 #include "esp_netif.h"
+#include "esp_sntp.h"
 #include "esp_wifi.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include "freertos/task.h"
 #include "nvs.h"
+#include "rtc_service.h"
 
 namespace brookesia::system_status {
 
@@ -47,6 +50,45 @@ constexpr char WIFI_NVS_NAMESPACE[] = "storage";
 constexpr char WIFI_NVS_ENABLED_KEY[] = "wifi_en";
 
 using StatusBar = esp_brookesia::systems::phone::StatusBar;
+
+/* Network time is the accurate source of truth: SNTP delivers UTC and the
+ * product timezone is applied once a sync completes, which keeps the
+ * build-timestamp seed (stored as local time) consistent until then. The
+ * component that owns the system clock must also persist it back into the
+ * PCF85063A so the correction survives a reboot. */
+constexpr char NTP_SERVER_PRIMARY[] = "ntp.aliyun.com";
+constexpr char DEVICE_TIMEZONE[] = "CST-8";
+
+bool s_time_sync_started = false;
+
+void timeSyncNotificationCallback(struct timeval *tv)
+{
+    (void)tv;
+    setenv("TZ", DEVICE_TIMEZONE, 1);
+    tzset();
+    ESP_LOGI(TAG, "SNTP synchronized; timezone %s applied",
+             DEVICE_TIMEZONE);
+    (void)rtc_service_sync_from_system_time();
+}
+
+void startTimeSyncOnce()
+{
+    if (s_time_sync_started || esp_sntp_enabled()) {
+        return;
+    }
+
+    esp_sntp_setoperatingmode(SNTP_OPMODE_POLL);
+    esp_sntp_setservername(0, NTP_SERVER_PRIMARY);
+    esp_sntp_set_time_sync_notification_cb(timeSyncNotificationCallback);
+    esp_sntp_init();
+    s_time_sync_started = true;
+    ESP_LOGI(TAG,
+             "SNTP time synchronization started against %s", NTP_SERVER_PRIMARY);
+}
+
+// Brings up netif + the default event loop + the Wi-Fi driver, tolerating a
+// stack that is already initialized. Defined after Monitor below.
+esp_err_t bringUpWifiStack();
 
 class SemaphoreLock {
 public:
@@ -384,6 +426,9 @@ private:
             if (event_id == IP_EVENT_STA_GOT_IP) {
                 monitor->_wifi_event_connected.store(true);
                 monitor->_wifi_reconnect_requested.store(false);
+                /* Wi-Fi only, not Xiaozhi: the Clock must become correct without
+                 * the user opening a voice application first. */
+                startTimeSyncOnce();
             } else if (event_id == IP_EVENT_STA_LOST_IP) {
                 monitor->_wifi_event_connected.store(false);
             }
@@ -510,6 +555,11 @@ private:
                 portEXIT_CRITICAL(&_snapshot_lock);
             }
 
+            /* The system clock can be corrected at runtime (the Xiaozhi
+             * server_time handshake), so keep the PCF85063A aligned with it and
+             * let that time survive the next reboot. */
+            (void)rtc_service_sync_from_system_time();
+
             updateStatusBar(next);
             if (_running.load()) {
                 vTaskDelay(pdMS_TO_TICKS(_refresh_period_ms));
@@ -524,27 +574,7 @@ private:
 
     esp_err_t ensureWifiStackInitialized() const
     {
-        esp_err_t result = esp_netif_init();
-        if (result != ESP_OK && result != ESP_ERR_INVALID_STATE) {
-            return result;
-        }
-
-        result = esp_event_loop_create_default();
-        if (result != ESP_OK && result != ESP_ERR_INVALID_STATE) {
-            return result;
-        }
-
-        if (esp_netif_get_handle_from_ifkey("WIFI_STA_DEF") == nullptr &&
-                esp_netif_create_default_wifi_sta() == nullptr) {
-            return ESP_ERR_NO_MEM;
-        }
-
-        wifi_init_config_t wifi_config = WIFI_INIT_CONFIG_DEFAULT();
-        result = esp_wifi_init(&wifi_config);
-        if (result != ESP_OK && result != ESP_ERR_WIFI_INIT_STATE) {
-            return result;
-        }
-        return ESP_OK;
+        return bringUpWifiStack();
     }
 
     esp_err_t readRegisters(uint8_t first_register, uint8_t *data, size_t size) const
@@ -850,6 +880,31 @@ private:
     Snapshot _snapshot = {};
 };
 
+esp_err_t bringUpWifiStack()
+{
+    esp_err_t result = esp_netif_init();
+    if (result != ESP_OK && result != ESP_ERR_INVALID_STATE) {
+        return result;
+    }
+
+    result = esp_event_loop_create_default();
+    if (result != ESP_OK && result != ESP_ERR_INVALID_STATE) {
+        return result;
+    }
+
+    if (esp_netif_get_handle_from_ifkey("WIFI_STA_DEF") == nullptr &&
+            esp_netif_create_default_wifi_sta() == nullptr) {
+        return ESP_ERR_NO_MEM;
+    }
+
+    wifi_init_config_t wifi_config = WIFI_INIT_CONFIG_DEFAULT();
+    result = esp_wifi_init(&wifi_config);
+    if (result != ESP_OK && result != ESP_ERR_WIFI_INIT_STATE) {
+        return result;
+    }
+    return ESP_OK;
+}
+
 Monitor &monitor()
 {
     static Monitor instance;
@@ -857,6 +912,11 @@ Monitor &monitor()
 }
 
 } // namespace
+
+esp_err_t init_wifi_stack()
+{
+    return bringUpWifiStack();
+}
 
 esp_err_t start(StatusBar *status_bar, uint32_t refresh_period_ms)
 {

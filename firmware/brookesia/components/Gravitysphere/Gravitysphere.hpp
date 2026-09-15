@@ -81,7 +81,12 @@ private:
     int _display_height = 0;
     std::atomic<int> _movement_center_x = 0;
     std::atomic<int> _movement_center_y = 0;
-    std::atomic<int> _movement_radius = 0;
+    // Ball-centre travel limits. The arena is the whole visual area, so the
+    // limit is per axis instead of a single inscribed-circle radius.
+    std::atomic<int> _min_center_x = 0;
+    std::atomic<int> _max_center_x = 0;
+    std::atomic<int> _min_center_y = 0;
+    std::atomic<int> _max_center_y = 0;
 
     lv_obj_t *_movement_boundary = nullptr;
     lv_obj_t *_ball = nullptr;
@@ -93,6 +98,8 @@ private:
     int _displayed_progress = -1;
 
     static constexpr int BALL_RADIUS = 22;
+    // Corner radius of the full-screen arena.
+    static constexpr int ARENA_RADIUS = 5;
     // Match the ball's shadow width so its glow is not clipped at the arena edge.
     static constexpr int MOVEMENT_SAFE_MARGIN = 18;
     static constexpr int UI_SAFE_MARGIN = 14;
