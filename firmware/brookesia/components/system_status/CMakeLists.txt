@@ -8,7 +8,9 @@ idf_component_register(
         esp_event
         esp_netif
         esp_wifi
+        lwip
         nvs_flash
+        rtc_service
 )
 
 target_compile_options(${COMPONENT_LIB} PRIVATE -Wno-missing-field-initializers)

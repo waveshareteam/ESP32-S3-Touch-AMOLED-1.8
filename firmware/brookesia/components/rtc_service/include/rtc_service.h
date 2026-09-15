@@ -38,6 +38,17 @@ esp_err_t rtc_service_init(void);
 esp_err_t rtc_service_read_and_sync_system_time(void);
 
 /**
+ * @brief Write the current system clock into the RTC when the two disagree.
+ *
+ * The network time sources in this firmware (the Xiaozhi server_time handshake,
+ * or a future SNTP client) set the system clock, not the RTC. Calling this
+ * periodically keeps the PCF85063A aligned with them so a corrected time
+ * survives a reboot instead of reverting to the last RTC value. The call is a
+ * no-op while the RTC is already within a few seconds of the system clock.
+ */
+esp_err_t rtc_service_sync_from_system_time(void);
+
+/**
  * @brief Return the last RTC state observed by this service.
  */
 esp_err_t rtc_service_get_status(rtc_service_status_t *status);

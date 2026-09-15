@@ -39,6 +39,18 @@ struct Snapshot {
 };
 
 /**
+ * Bring up the shared Wi-Fi stack (netif + default event loop + driver).
+ *
+ * Call this before the display and launcher allocate their own internal RAM.
+ * esp_wifi_init() allocates its static RX pool as one large contiguous block of
+ * DMA-capable internal RAM; once Brookesia has built its UI that block can no
+ * longer be satisfied and every later Wi-Fi start fails with ESP_ERR_NO_MEM.
+ * The call is idempotent, so start() and the Xiaozhi app may still call the
+ * underlying ESP-IDF initializers afterwards.
+ */
+esp_err_t init_wifi_stack();
+
+/**
  * Start real board-status monitoring.
  *
  * The caller retains ownership of status_bar, which must remain alive until

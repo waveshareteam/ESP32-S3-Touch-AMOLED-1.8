@@ -88,6 +88,30 @@ CONFIG_LWIP_TCP_WND_DEFAULT=32768
 CONFIG_LWIP_TCP_RECVMBOX_SIZE=32
 CONFIG_LWIP_UDP_RECVMBOX_SIZE=16
 
+# The BSP builds its LVGL draw buffer as H_RES x BSP_DISPLAY_LVGL_BUF_HEIGHT
+# pixels in PSRAM (buff_dma = 0 in bsp_display_lcd_init).  For every flush the
+# SPI master then has to copy that buffer through a temporary DMA-capable
+# *internal* buffer of the same size, because a PSRAM buffer cannot be handed to
+# the panel directly.  The BSP default of 100 lines means a 73,600-byte internal
+# allocation per flush; after Wi-Fi and the launcher have claimed their internal
+# RAM that allocation fails and the frame is dropped, which shows up as a
+# partially drawn screen.  Ten lines need only 7,360 bytes, which always fits,
+# and still transfers a full frame in ~22 ms over QSPI.
+CONFIG_BSP_DISPLAY_LVGL_BUF_HEIGHT=10
+
+# Music and the Xiaozhi prompt clips now live on the same SPIFFS partition as the
+# Xiaozhi font, and the music player holds one file open for a whole track. The
+# BSP default of 2 open files is too low for that combination; the P4 reference
+# firmware uses 5.
+CONFIG_BSP_SPIFFS_MAX_FILES=5
+
+# The RTC, the build-timestamp seed and SNTP own the system clock. The Xiaozhi
+# component would otherwise overwrite it with server_time plus the server's own
+# timezone offset, which is a different convention and double-shifts the clock
+# once SNTP has applied CONFIG timezone. Its Kconfig documents this switch for
+# exactly this case.
+CONFIG_XIAOZHI_SYNC_SYSTEM_TIME_FROM_SERVER=n
+
 CONFIG_BSP_I2C_CLK_SPEED_HZ=400000
 CONFIG_BSP_SPIFFS_PARTITION_LABEL="storage"
 CONFIG_BSP_SPIFFS_MOUNT_POINT="/spiffs"

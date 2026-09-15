@@ -266,7 +266,7 @@ void Gravitysphere::createUi()
     _movement_boundary = lv_obj_create(screen);
     lv_obj_remove_flag(_movement_boundary, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_remove_flag(_movement_boundary, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_set_style_radius(_movement_boundary, LV_RADIUS_CIRCLE, LV_PART_MAIN);
+    lv_obj_set_style_radius(_movement_boundary, ARENA_RADIUS, LV_PART_MAIN);
     lv_obj_set_style_bg_opa(_movement_boundary, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_set_style_border_width(_movement_boundary, 1, LV_PART_MAIN);
     lv_obj_set_style_border_color(_movement_boundary, lv_color_hex(0x52627F), LV_PART_MAIN);
@@ -310,9 +310,11 @@ bool Gravitysphere::refreshVisualGeometry(bool request_recalibration)
     const lv_area_t visual_area = getVisualArea();
     const int width = lv_area_get_width(&visual_area);
     const int height = lv_area_get_height(&visual_area);
-    // Ball-center radius = visual radius - solid ball radius - glow margin.
-    const int movement_radius = (std::min(width, height) / 2) - BALL_RADIUS - MOVEMENT_SAFE_MARGIN;
-    if (width <= 0 || height <= 0 || movement_radius <= 0) {
+    // The ball travels the whole visual area. Its centre stays half a ball plus
+    // the glow margin away from every edge so the ball and its shadow are never
+    // clipped by the arena.
+    const int margin = BALL_RADIUS + MOVEMENT_SAFE_MARGIN;
+    if (width <= (margin * 2) || height <= (margin * 2)) {
         return false;
     }
 
@@ -327,7 +329,10 @@ bool Gravitysphere::refreshVisualGeometry(bool request_recalibration)
     _display_height = height;
     _movement_center_x.store(width / 2);
     _movement_center_y.store(height / 2);
-    _movement_radius.store(movement_radius);
+    _min_center_x.store(margin);
+    _max_center_x.store(width - margin);
+    _min_center_y.store(margin);
+    _max_center_y.store(height - margin);
 
     if (_ball != nullptr) {
         _ball_x.store(_movement_center_x.load());
@@ -352,7 +357,6 @@ void Gravitysphere::layoutUi()
 {
     const int center_x = _movement_center_x.load();
     const int center_y = _movement_center_y.load();
-    const int movement_radius = _movement_radius.load();
     const int screen_radius = std::min(_display_width, _display_height) / 2;
     const int safe_half_extent = std::max(
         1,
@@ -361,12 +365,8 @@ void Gravitysphere::layoutUi()
     const int safe_width = std::max(1, (safe_half_extent * 2) - (UI_INNER_PADDING * 2));
 
     if (_movement_boundary != nullptr) {
-        lv_obj_set_size(_movement_boundary, movement_radius * 2, movement_radius * 2);
-        lv_obj_set_pos(
-            _movement_boundary,
-            center_x - movement_radius,
-            center_y - movement_radius
-        );
+        lv_obj_set_size(_movement_boundary, _display_width, _display_height);
+        lv_obj_set_pos(_movement_boundary, 0, 0);
     }
 
     if (_hint_label != nullptr) {
@@ -631,29 +631,10 @@ bool Gravitysphere::performLevelCalibration()
 
 void Gravitysphere::constrainPosition(int &x, int &y) const
 {
-    const int center_x = _movement_center_x.load();
-    const int center_y = _movement_center_y.load();
-    const int radius = _movement_radius.load();
-    const int64_t delta_x = static_cast<int64_t>(x) - center_x;
-    const int64_t delta_y = static_cast<int64_t>(y) - center_y;
-    const int64_t distance_squared = (delta_x * delta_x) + (delta_y * delta_y);
-    const int64_t radius_squared = static_cast<int64_t>(radius) * radius;
-
-    if (radius <= 0) {
-        x = center_x;
-        y = center_y;
-        return;
-    }
-    if (distance_squared <= radius_squared) {
-        return;
-    }
-
-    const double scale = static_cast<double>(radius) /
-                         std::sqrt(static_cast<double>(distance_squared));
-    // Integer conversion truncates each component toward the center, keeping
-    // the projected point on or just inside the circular boundary.
-    x = center_x + static_cast<int>(static_cast<double>(delta_x) * scale);
-    y = center_y + static_cast<int>(static_cast<double>(delta_y) * scale);
+    // The arena is the whole screen, so each axis is clamped independently and
+    // the ball slides along an edge instead of being pulled toward the centre.
+    x = std::clamp(x, _min_center_x.load(), _max_center_x.load());
+    y = std::clamp(y, _min_center_y.load(), _max_center_y.load());
 }
 
 void Gravitysphere::releaseUi()

@@ -13,11 +13,10 @@
 | --- | --- |
 | [`brookesia_app_calculator/`](brookesia_app_calculator/) | 按运行时可视区域布局的计算器 |
 | [`draw/`](draw/) | 全可视区域画板 |
-| [`Crosshair/`](Crosshair/) | 显示与触摸对齐靶 |
 | [`Gravitysphere/`](Gravitysphere/) | QMI8658 重力球应用 |
 | [`Clock/`](Clock/) | RTC 时钟 |
 | [`SpecAnalyzer/`](SpecAnalyzer/) | ES8311 单麦克风频谱分析仪 |
-| [`MusicPlayer/`](MusicPlayer/) | SD 卡 MP3/WAV 播放器 |
+| [`MusicPlayer/`](MusicPlayer/) | SPIFFS MP3/WAV 播放器（SD 卡作为回退） |
 | [`Gallery/`](Gallery/) | 按运行时解码边界处理的 SD 卡 JPEG 图库 |
 | [`VideoPlayer/`](VideoPlayer/) | SD 卡 MJPEG/PCM AVI 播放器 |
 | [`Recorder/`](Recorder/) | ES8311 单麦克风 WAV 录音机 |

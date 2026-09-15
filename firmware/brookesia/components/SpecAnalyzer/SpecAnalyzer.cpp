@@ -174,10 +174,6 @@ void SpecAnalyzer::destroyUi(void)
         lv_timer_del(_timer);
         _timer = nullptr;
     }
-    if (_mic_label) {
-        lv_obj_del(_mic_label);
-        _mic_label = nullptr;
-    }
     if (_canvas) {
         lv_obj_del(_canvas);
         _canvas = nullptr;
@@ -279,13 +275,6 @@ bool SpecAnalyzer::run(void)
         }
     }
 
-    _mic_label = lv_label_create(scr);
-    lv_label_set_text(_mic_label, "Mic starting...");
-    lv_obj_set_style_text_color(_mic_label, lv_color_hex(0x00BFFF), LV_PART_MAIN);
-    lv_obj_set_style_bg_color(_mic_label, lv_color_hex(0x222222), LV_PART_MAIN);
-    lv_obj_set_style_bg_opa(_mic_label, LV_OPA_70, LV_PART_MAIN);
-    lv_obj_set_style_pad_all(_mic_label, 6, LV_PART_MAIN);
-    lv_obj_align_to(_mic_label, _canvas, LV_ALIGN_TOP_MID, 0, 12);
 
     // One 1024-sample capture at 16 kHz arrives about every 64 ms, so refreshing
     // faster only redraws duplicate data and starves the LVGL event loop.
@@ -405,15 +394,9 @@ bool SpecAnalyzer::pause()
             "Microphone codec release was not acknowledged: %s",
             esp_err_to_name(_codec_release_result.load())
         );
-        if (_mic_label) {
-            lv_label_set_text(_mic_label, "Mic release failed");
-        }
         return false;
     }
 
-    if (_mic_label) {
-        lv_label_set_text(_mic_label, "Mic paused");
-    }
     _shown_capture_state = CaptureState::Idle;
     return true;
 }
@@ -435,16 +418,10 @@ bool SpecAnalyzer::resume()
     if (_worker_exit.load() || !_codec_released.load() ||
         _codec_release_result.load() != ESP_OK) {
         ESP_UTILS_LOGE("Cannot resume before the previous codec release succeeds");
-        if (_mic_label) {
-            lv_label_set_text(_mic_label, "Mic release failed");
-        }
         return false;
     }
 
     if (!ensureAudioTask()) {
-        if (_mic_label) {
-            lv_label_set_text(_mic_label, "Mic unavailable");
-        }
         return false;
     }
 
@@ -452,9 +429,6 @@ bool SpecAnalyzer::resume()
     _capture_state.store(CaptureState::Starting);
     _capture_requested.store(true);
     xTaskNotifyGive(_audio_task_handle.load());
-    if (_mic_label) {
-        lv_label_set_text(_mic_label, "Mic starting...");
-    }
     if (_timer) {
         lv_timer_resume(_timer);
     }
@@ -700,7 +674,7 @@ void SpecAnalyzer::timer_cb(lv_timer_t *timer)
             status = "Mic starting...";
             break;
         case CaptureState::Running:
-            status = "Mic 1 / Mic 2";
+            status = "Microphone capture running";
             break;
         case CaptureState::Stopping:
             status = "Mic stopping...";
@@ -709,9 +683,10 @@ void SpecAnalyzer::timer_cb(lv_timer_t *timer)
             status = "Mic unavailable";
             break;
         }
-        if (app->_mic_label) {
-            lv_label_set_text(app->_mic_label, status);
-        }
+        // The spectrum canvas carries the whole UI: no title or status banner is
+        // drawn. Report state changes on the console so a microphone problem is
+        // still diagnosable.
+        ESP_UTILS_LOGI("%s", status);
         app->_shown_capture_state = state;
     }
 

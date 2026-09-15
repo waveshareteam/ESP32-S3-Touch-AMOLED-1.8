@@ -14,11 +14,10 @@ use only the common board APIs; neither profile is a replacement for its BSP.
 | --- | --- |
 | [`brookesia_app_calculator/`](brookesia_app_calculator/) | Calculator with a runtime visual-area layout |
 | [`draw/`](draw/) | Full visual-area drawing panel |
-| [`Crosshair/`](Crosshair/) | Display and touch alignment target |
 | [`Gravitysphere/`](Gravitysphere/) | QMI8658 gravity-ball application |
-| [`Clock/`](Clock/) | RTC-backed clock |
-| [`SpecAnalyzer/`](SpecAnalyzer/) | ES8311 single-microphone spectrum analyzer |
-| [`MusicPlayer/`](MusicPlayer/) | SD-card MP3/WAV player |
+| [`Clock/`](Clock/) | PCF85063A/SNTP-backed clock |
+| [`SpecAnalyzer/`](SpecAnalyzer/) | ES8311 single-microphone spectrum analyzer (no title banner) |
+| [`MusicPlayer/`](MusicPlayer/) | SPIFFS MP3/WAV player with an SD-card fallback |
 | [`Gallery/`](Gallery/) | SD-card JPEG gallery with runtime decode bounds |
 | [`VideoPlayer/`](VideoPlayer/) | SD-card MJPEG/PCM AVI player |
 | [`Recorder/`](Recorder/) | ES8311 single-microphone WAV recorder |
