@@ -9,7 +9,7 @@
         "zh": "firmware/README_ZH.md"
       },
       "files": [
-        "firmware/v1/ESP32-S3-Touch-AMOLED-1.8_FactoryOnly_20260915.bin"
+        "firmware/ESP32-S3-Touch-AMOLED-1.8_FactoryOnly_20260915.bin"
       ]
     },
     {
@@ -20,7 +20,7 @@
         "zh": "firmware/README_ZH.md"
       },
       "files": [
-        "firmware/v2/ESP32-S3-Touch-AMOLED-1.8_FactoryOnly_20260915.bin"
+        "firmware/ESP32-S3-Touch-AMOLED-1.8_FactoryOnly_20261118.bin"
       ]
     }
   ]
