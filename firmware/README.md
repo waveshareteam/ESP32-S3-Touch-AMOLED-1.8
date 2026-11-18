@@ -7,7 +7,7 @@ Match the hardware revision: V1 uses SH8601 / FT3168; V2 uses CO5300 / CST820. D
 | [ESP32-S3-Touch-AMOLED-1.8_FactoryOnly_20261118.bin](ESP32-S3-Touch-AMOLED-1.8_FactoryOnly_20261118.bin) | 2026-11-18 | V2 | ESP-Brookesia factory recovery | `0x0` |
 | [ESP32-S3-Touch-AMOLED-1.8_FactoryOnly_20260915.bin](ESP32-S3-Touch-AMOLED-1.8_FactoryOnly_20260915.bin) | 2026-09-15 | V1 | ESP-Brookesia factory recovery | `0x0` |
 
-The original images are retained. Each canonical copy has the same SHA-256 as its corresponding original. The firmware center registers the two revisions separately through [manifest.json](manifest.json).
+The original images are retained. Each canonical copy has the same SHA-256 as its corresponding original. The firmware center registers only the base model ESP32-S3-Touch-AMOLED-1.8 through [manifest.json](manifest.json), with two firmware versions identified by date. The default, latest firmware dated 20261118 is for V2 only; V1 hardware must use the 20260915 firmware.
 
 | Original file | Hardware | SHA-256 |
 | --- | --- | --- |

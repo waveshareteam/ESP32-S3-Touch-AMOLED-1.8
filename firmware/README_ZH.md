@@ -7,7 +7,7 @@
 | [ESP32-S3-Touch-AMOLED-1.8_FactoryOnly_20261118.bin](ESP32-S3-Touch-AMOLED-1.8_FactoryOnly_20261118.bin) | 2026-11-18 | V2 | ESP-Brookesia 出厂恢复 | `0x0` |
 | [ESP32-S3-Touch-AMOLED-1.8_FactoryOnly_20260915.bin](ESP32-S3-Touch-AMOLED-1.8_FactoryOnly_20260915.bin) | 2026-09-15 | V1 | ESP-Brookesia 出厂恢复 | `0x0` |
 
-原始镜像保留，规范命名副本与对应原文件的 SHA-256 完全一致。固件中心通过 [manifest.json](manifest.json) 分别登记两个硬件版本。
+原始镜像保留，规范命名副本与对应原文件的 SHA-256 完全一致。固件中心通过 [manifest.json](manifest.json) 只登记基础型号 ESP32-S3-Touch-AMOLED-1.8，按日期提供两个可选固件版本。默认日期最新的 20261118 固件仅适用于 V2；V1 硬件必须选择 20260915 固件。
 
 | 原文件 | 适用硬件 | SHA-256 |
 | --- | --- | --- |
