@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "products": [
+    {
+      "id": "esp32-s3-touch-amoled-1.8-v1",
+      "model": "ESP32-S3-Touch-AMOLED-1.8-V1",
+      "readme": {
+        "en": "firmware/README.md",
+        "zh": "firmware/README_ZH.md"
+      },
+      "files": [
+        "firmware/ESP32-S3-Touch-AMOLED-1.8_FactoryOnly_20260915.bin"
+      ]
+    },
+    {
+      "id": "esp32-s3-touch-amoled-1.8-v2",
+      "model": "ESP32-S3-Touch-AMOLED-1.8-V2",
+      "readme": {
+        "en": "firmware/README.md",
+        "zh": "firmware/README_ZH.md"
+      },
+      "files": [
+        "firmware/ESP32-S3-Touch-AMOLED-1.8_FactoryOnly_20261118.bin"
+      ]
+    }
+  ]
+}
